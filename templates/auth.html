@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CipherVault - Enterprise Security</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0F172A;
+      --secondary: #1E293B;
+      --accent: #3B82F6;
+      --accent-hover: #2563EB;
+      --success: #10B981;
+      --danger: #EF4444;
+      --text-primary: #0F172A;
+      --text-secondary: #64748B;
+      --bg-primary: #F8FAFC;
+      --bg-secondary: #FFFFFF;
+      --border: #E2E8F0;
+    }
+    
+    [data-theme="dark"] {
+      --primary: #F8FAFC;
+      --secondary: #E2E8F0;
+      --accent: #60A5FA;
+      --accent-hover: #3B82F6;
+      --success: #34D399;
+      --danger: #F87171;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --bg-primary: #0F172A;
+      --bg-secondary: #1E293B;
+      --border: #334155;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Animated geometric background */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: moveGrid 20s linear infinite;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    
+    @keyframes moveGrid {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+    
+    /* Gradient orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      pointer-events: none;
+      animation: float 20s infinite ease-in-out;
+    }
+    
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      top: -250px;
+      right: -250px;
+      animation-delay: 0s;
+    }
+    
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #10B981, #3B82F6);
+      bottom: -200px;
+      left: -200px;
+      animation-delay: 5s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.9); }
+    }
+    
+    /* Professional card design */
+    .auth-card {
+      background: var(--bg-secondary);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3B82F6, #8B5CF6, #10B981);
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .theme-toggle i {
+      color: var(--text-primary);
+      font-size: 20px;
+    }
+    
+    /* Modern input styling */
+    .modern-input {
+      background: var(--bg-primary);
+      border: 2px solid var(--border);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+    
+    .modern-input::placeholder {
+      color: var(--text-secondary);
+    }
+    
+    .modern-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    /* Professional button */
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    /* Tab styling */
+    .tab-button {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .tab-button::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    
+    .tab-button.active {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    
+    .tab-button.active::after {
+      width: 100%;
+    }
+    
+    .tab-button:hover:not(.active) {
+      color: var(--text-primary);
+    }
+    
+    /* Form animations */
+    .fade-enter {
+      animation: fadeSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .fade-exit {
+      animation: fadeSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes fadeSlideOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+    }
+    
+    /* Icon styling */
+    .icon-wrapper {
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .icon-wrapper:hover {
+      color: var(--accent);
+      transform: scale(1.1);
+    }
+    
+    /* Alert styling */
+    .alert {
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--bg-secondary);
+      border-left-width: 4px;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Strength indicator */
+    .strength-bar {
+      height: 3px;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      background: var(--border);
+    }
+    
+    /* Brand logo */
+    .brand-icon {
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Text colors */
+    .text-primary {
+      color: var(--text-primary);
+    }
+    
+    .text-secondary {
+      color: var(--text-secondary);
+    }
+    
+    /* Links */
+    a {
+      color: var(--accent);
+      transition: color 0.3s ease;
+    }
+    
+    a:hover {
+      color: var(--accent-hover);
+    }
+    
+    /* Feature list */
+    .feature-item {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .feature-item:hover {
+      transform: translateX(5px);
+      border-color: var(--accent);
+    }
+    
+    /* Info box */
+    .info-box {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+    }
+    
+    [data-theme="dark"] .info-box {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    
+    /* Checkbox */
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+    
+    /* Label */
+    label {
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <!-- Gradient Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <i class="fas fa-moon" id="theme-icon"></i>
+  </button>
+  
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="w-full max-w-5xl">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          
+          <!-- Left Side - Branding & Features -->
+          <div class="hidden lg:block space-y-8">
+            <div>
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl brand-icon mb-6">
+                <i class="fas fa-shield-halved text-white text-2xl"></i>
+              </div>
+              <h1 class="text-4xl font-bold text-primary mb-4">CipherVault</h1>
+              <p class="text-xl text-secondary mb-8">Enterprise-Grade Password Security</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div class="feature-item p-4 rounded-xl">
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-lg bg-blue-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-lock text-blue-500"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-primary mb-1">Military-Grade Encryption</h3>
+                    <p class="text-sm text-secondary">256-bit AES encryption protects your data</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="feature-item p-4 rounded-xl">
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-lg bg-green-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-cloud text-green-500"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-primary mb-1">Secure Cloud Sync</h3>
+                    <p class="text-sm text-secondary">Access your passwords from anywhere</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="feature-item p-4 rounded-xl">
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-fingerprint text-purple-500"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-primary mb-1">Biometric Authentication</h3>
+                    <p class="text-sm text-secondary">Advanced security for peace of mind</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-6 pt-4">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-primary">500K+</div>
+                <div class="text-sm text-secondary">Active Users</div>
+              </div>
+              <div class="w-px h-12" style="background: var(--border);"></div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-primary">99.9%</div>
+                <div class="text-sm text-secondary">Uptime</div>
+              </div>
+              <div class="w-px h-12" style="background: var(--border);"></div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-primary">4.9/5</div>
+                <div class="text-sm text-secondary">Rating</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Side - Auth Form -->
+          <div class="auth-card rounded-3xl p-8 md:p-10">
+            
+            <!-- Mobile Logo -->
+            <div class="lg:hidden text-center mb-8">
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl brand-icon mb-4">
+                <i class="fas fa-shield-halved text-white text-2xl"></i>
+              </div>
+              <h1 class="text-2xl font-bold text-primary">CipherVault</h1>
+              <p class="text-sm text-secondary mt-1">Enterprise Password Security</p>
+            </div>
+            
+            <!-- Alert Messages -->
+            {% if error %}
+            <div class="alert border-red-500 text-red-700 p-4 mb-6 rounded-xl flex items-center gap-3">
+              <i class="fas fa-exclamation-circle text-xl"></i>
+              <span class="text-sm font-medium">{{ error }}</span>
+            </div>
+            {% endif %}
+            
+            {% if success %}
+            <div class="alert border-green-500 text-green-700 p-4 mb-6 rounded-xl flex items-center gap-3">
+              <i class="fas fa-check-circle text-xl"></i>
+              <span class="text-sm font-medium">{{ success }}</span>
+            </div>
+            {% endif %}
+            
+            <!-- Tab Navigation -->
+            <div class="flex gap-1 mb-8 border-b-2" style="border-color: var(--border);">
+              <button id="login-tab" class="tab-button active flex-1 py-4 font-semibold text-sm transition-all duration-300 focus:outline-none flex items-center justify-center gap-2" onclick="showTab('login')">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Sign In</span>
+              </button>
+              <button id="register-tab" class="tab-button flex-1 py-4 font-semibold text-sm transition-all duration-300 focus:outline-none flex items-center justify-center gap-2" onclick="showTab('register')">
+                <i class="fas fa-user-plus"></i>
+                <span>Create Account</span>
+              </button>
+            </div>
+            
+            <!-- Forms Container -->
+            <div class="relative" style="min-height: 420px;">
+              
+              <!-- Login Form -->
+              <div id="login-container" class="absolute w-full fade-enter">
+                <div class="mb-6">
+                  <h2 class="text-2xl font-bold text-primary mb-2">Welcome Back</h2>
+                  <p class="text-sm text-secondary">Enter your credentials to access your vault</p>
+                </div>
+                
+                <form method="POST" action="/" class="space-y-5">
+                  <input type="hidden" name="form_type" value="login">
+                  
+                  <div>
+                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Username</label>
+                    <div class="relative">
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                        <i class="fas fa-user"></i>
+                      </div>
+                      <input type="text" name="username" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="Enter your username" required autofocus>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Password</label>
+                    <div class="relative">
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                      </div>
+                      <input type="password" name="password" id="login-pass" class="modern-input w-full rounded-xl pl-12 pr-12 py-3.5 text-sm outline-none" placeholder="Enter your password" required>
+                      <button type="button" id="login-eye" class="icon-wrapper absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center cursor-pointer">
+                      <input type="checkbox" class="w-4 h-4 rounded focus:ring-2 focus:ring-blue-500">
+                      <span class="ml-2 text-secondary">Remember me</span>
+                    </label>
+                    <a href="#" class="font-semibold">Forgot Password?</a>
+                  </div>
+                  
+                  <button type="submit" class="btn-primary w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign In</span>
+                  </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                  <p class="text-xs text-secondary flex items-center justify-center gap-2">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>Protected by 256-bit encryption</span>
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Register Form -->
+              <div id="register-container" class="absolute w-full hidden">
+                <div class="mb-6">
+                  <h2 class="text-2xl font-bold text-primary mb-2">Create Account</h2>
+                  <p class="text-sm text-secondary">Join thousands of users securing their data</p>
+                </div>
+                
+                <form method="POST" action="/" class="space-y-5">
+                  <input type="hidden" name="form_type" value="register">
+                  
+                  <div>
+                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Username</label>
+                    <div class="relative">
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                        <i class="fas fa-user"></i>
+                      </div>
+                      <input type="text" name="username" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="Choose a username" required>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Master Password</label>
+                    <div class="relative">
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                      </div>
+                      <input type="password" name="password" id="register-pass" class="modern-input w-full rounded-xl pl-12 pr-12 py-3.5 text-sm outline-none" placeholder="Create a strong password" required>
+                      <button type="button" id="register-eye" class="icon-wrapper absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                    <div class="mt-3 space-y-2">
+                      <div class="flex gap-1.5">
+                        <div class="strength-bar flex-1 rounded-full"></div>
+                        <div class="strength-bar flex-1 rounded-full"></div>
+                        <div class="strength-bar flex-1 rounded-full"></div>
+                        <div class="strength-bar flex-1 rounded-full"></div>
+                      </div>
+                      <p class="text-xs text-secondary ml-1">Use 8+ characters with letters, numbers & symbols</p>
+                    </div>
+                  </div>
+                  
+                  <div class="info-box border rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                      <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                      <div class="text-xs text-secondary">
+                        <p class="font-semibold text-primary mb-2">Important Information:</p>
+                        <ul class="space-y-1">
+                          <li>• Your master password encrypts all data</li>
+                          <li>• Cannot be recovered if forgotten</li>
+                          <li>• Never stored on our servers</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button type="submit" class="btn-primary w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>Create Secure Account</span>
+                  </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                  <p class="text-xs text-secondary">
+                    By signing up, you agree to our <a href="#" class="font-semibold">Terms</a> & <a href="#" class="font-semibold">Privacy Policy</a>
+                  </p>
+                </div>
+              </div>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Theme Management
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      if (newTheme === 'dark') {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    }
+    
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      body.setAttribute('data-theme', savedTheme);
+      
+      if (savedTheme === 'dark') {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      }
+    });
+    
+    // Tab switching with smooth animations
+    function showTab(tab) {
+      const loginTab = document.getElementById("login-tab");
+      const registerTab = document.getElementById("register-tab");
+      const loginContainer = document.getElementById("login-container");
+      const registerContainer = document.getElementById("register-container");
+      
+      if (tab === "login") {
+        loginTab.classList.add("active");
+        registerTab.classList.remove("active");
+        
+        registerContainer.classList.remove("fade-enter");
+        registerContainer.classList.add("fade-exit");
+        
+        setTimeout(() => {
+          registerContainer.classList.add("hidden");
+          registerContainer.classList.remove("fade-exit");
+          
+          loginContainer.classList.remove("hidden");
+          loginContainer.classList.add("fade-enter");
+        }, 300);
+        
+      } else {
+        registerTab.classList.add("active");
+        loginTab.classList.remove("active");
+        
+        loginContainer.classList.remove("fade-enter");
+        loginContainer.classList.add("fade-exit");
+        
+        setTimeout(() => {
+          loginContainer.classList.add("hidden");
+          loginContainer.classList.remove("fade-exit");
+          
+          registerContainer.classList.remove("hidden");
+          registerContainer.classList.add("fade-enter");
+        }, 300);
+      }
+    }
+
+    // Password visibility toggle
+    function setupPasswordToggle(eyeId, inputId) {
+      const eye = document.getElementById(eyeId);
+      const input = document.getElementById(inputId);
+      
+      if (eye && input) {
+        eye.addEventListener('click', function() {
+          const icon = this.querySelector('i');
+          if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+          } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+          }
+        });
+      }
+    }
+    
+    setupPasswordToggle('login-eye', 'login-pass');
+    setupPasswordToggle('register-eye', 'register-pass');
+    
+    // Password strength indicator
+    const registerPass = document.getElementById('register-pass');
+    if (registerPass) {
+      registerPass.addEventListener('input', function() {
+        const password = this.value;
+        const strengthBars = document.querySelectorAll('#register-container .strength-bar');
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+        if (/\d/.test(password)) strength++;
+        if (/[^a-zA-Z0-9]/.test(password)) strength++;
+        
+        const colors = ['#EF4444', '#F59E0B', '#10B981', '#10B981'];
+        
+        strengthBars.forEach((bar, index) => {
+          if (index < strength) {
+            bar.style.backgroundColor = colors[strength - 1];
+          } else {
+            bar.style.backgroundColor = 'var(--border)';
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
