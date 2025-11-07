@@ -44,18 +44,37 @@ const Toast = {
 
 // Password Strength Calculator
 function calculatePasswordStrength(password) {
-  let strength = 0;
+  const length = password.length;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasDigit = /\d/.test(password);
+  const hasSpecial = /[^a-zA-Z0-9]/.test(password);
   
-  if (password.length >= 8) strength++;
-  if (password.length >= 12) strength++;
-  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-  if (/\d/.test(password)) strength++;
-  if (/[^a-zA-Z0-9]/.test(password)) strength++;
+  const criteriaMet = [hasUpper, hasLower, hasDigit, hasSpecial].filter(Boolean).length;
+  
+  let label = 'Weak';
+  let color = '#ef4444';
+  let score = 1;
+  
+  // Strong password conditions
+  if ((length >= 14 && criteriaMet >= 3) ||
+      (length >= 12 && criteriaMet >= 4) ||
+      (length >= 10 && criteriaMet >= 4 && hasSpecial)) {
+    label = 'Strong';
+    color = '#22c55e';
+    score = 5;
+  }
+  // Medium password conditions
+  else if (length >= 8 && criteriaMet >= 3) {
+    label = 'Medium';
+    color = '#f59e0b';
+    score = 3;
+  }
   
   return {
-    score: strength,
-    label: strength <= 2 ? 'Weak' : strength <= 3 ? 'Medium' : 'Strong',
-    color: strength <= 2 ? '#ef4444' : strength <= 3 ? '#f59e0b' : '#22c55e'
+    score: score,
+    label: label,
+    color: color
   };
 }
 

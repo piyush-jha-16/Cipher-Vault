@@ -116,7 +116,8 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      min-height: 650px;
     }
     
     .auth-card::before {
@@ -232,10 +233,16 @@
     /* Tab styling */
     .tab-button {
       background: transparent;
-      color: var(--text-secondary);
+      color: #0F172A !important;
       border: none;
       transition: all 0.3s ease;
       position: relative;
+      font-weight: 500 !important;
+      font-size: 0.9rem !important;
+    }
+    
+    [data-theme="dark"] .tab-button {
+      color: #E2E8F0 !important;
     }
     
     .tab-button::after {
@@ -245,14 +252,18 @@
       left: 50%;
       transform: translateX(-50%);
       width: 0;
-      height: 2px;
+      height: 3px;
       background: var(--accent);
       transition: width 0.3s ease;
     }
     
     .tab-button.active {
-      color: var(--text-primary);
-      font-weight: 600;
+      color: #3B82F6 !important;
+      font-weight: 700 !important;
+    }
+    
+    [data-theme="dark"] .tab-button.active {
+      color: #60A5FA !important;
     }
     
     .tab-button.active::after {
@@ -260,7 +271,11 @@
     }
     
     .tab-button:hover:not(.active) {
-      color: var(--text-primary);
+      color: #3B82F6 !important;
+    }
+    
+    [data-theme="dark"] .tab-button:hover:not(.active) {
+      color: #93C5FD !important;
     }
     
     /* Form animations */
@@ -388,6 +403,11 @@
     label {
       color: var(--text-secondary);
     }
+    
+    /* Ensure hidden class works */
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body data-theme="light">
@@ -401,18 +421,17 @@
   </button>
   
   <div class="container mx-auto px-4 relative z-10">
-    <div class="flex items-center justify-center min-h-screen">
-      <div class="w-full max-w-5xl">
+    <div class="flex items-center justify-center min-h-screen py-12">
+      <div class="w-full max-w-6xl">
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           
           <!-- Left Side - Branding & Features -->
-          <div class="hidden lg:block space-y-8">
+          <div class="space-y-8 lg:sticky lg:top-8">
             <div>
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl brand-icon mb-6">
-                <i class="fas fa-shield-halved text-white text-2xl"></i>
-              </div>
-              <h1 class="text-4xl font-bold text-primary mb-4">CipherVault</h1>
+              <h1 class="text-5xl mb-4" style="font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;">
+                <span style="color: var(--text-primary);">Cipher</span><span style="font-weight: 300; color: var(--accent);"> Vault</span>
+              </h1>
               <p class="text-xl text-secondary mb-8">Enterprise-Grade Password Security</p>
             </div>
             
@@ -475,15 +494,6 @@
           <!-- Right Side - Auth Form -->
           <div class="auth-card rounded-3xl p-8 md:p-10">
             
-            <!-- Mobile Logo -->
-            <div class="lg:hidden text-center mb-8">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl brand-icon mb-4">
-                <i class="fas fa-shield-halved text-white text-2xl"></i>
-              </div>
-              <h1 class="text-2xl font-bold text-primary">CipherVault</h1>
-              <p class="text-sm text-secondary mt-1">Enterprise Password Security</p>
-            </div>
-            
             <!-- Alert Messages -->
             {% if error %}
             <div class="alert border-red-500 text-red-700 p-4 mb-6 rounded-xl flex items-center gap-3">
@@ -512,10 +522,10 @@
             </div>
             
             <!-- Forms Container -->
-            <div class="relative" style="min-height: 420px;">
+            <div class="relative">
               
               <!-- Login Form -->
-              <div id="login-container" class="absolute w-full fade-enter">
+              <div id="login-container" class="w-full fade-enter">
                 <div class="mb-6">
                   <h2 class="text-2xl font-bold text-primary mb-2">Welcome Back</h2>
                   <p class="text-sm text-secondary">Enter your credentials to access your vault</p>
@@ -570,7 +580,7 @@
               </div>
               
               <!-- Register Form -->
-              <div id="register-container" class="absolute w-full hidden">
+              <div id="register-container" class="w-full hidden">
                 <div class="mb-6">
                   <h2 class="text-2xl font-bold text-primary mb-2">Create Account</h2>
                   <p class="text-sm text-secondary">Join thousands of users securing their data</p>
@@ -586,6 +596,16 @@
                         <i class="fas fa-user"></i>
                       </div>
                       <input type="text" name="username" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="Choose a username" required>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Email Address</label>
+                    <div class="relative">
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                      </div>
+                      <input type="email" name="email" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="your.email@example.com" required>
                     </div>
                   </div>
                   
