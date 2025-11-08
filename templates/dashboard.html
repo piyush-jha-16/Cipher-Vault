@@ -51,6 +51,63 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(139, 92, 246, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 92, 246, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px, 60px 60px, 20px 20px, 20px 20px;
+      pointer-events: none;
+      opacity: 0.5;
+      z-index: 0;
+      animation: gridMove 40s linear infinite;
+    }
+    
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
+    
+    /* Subtle radial gradients for depth */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+      animation: pulse 10s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
+    }
+    
+    /* Ensure content appears above background */
+    .navbar,
+    .container,
+    .main-content {
+      position: relative;
+      z-index: 1;
     }
     
     /* Navigation */
@@ -301,7 +358,44 @@
     
     /* Range input */
     input[type="range"] {
-      accent-color: var(--accent);
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    
+    input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
     
     /* Checkbox */
@@ -670,39 +764,49 @@
       </div>
       
       <!-- Security Score -->
-      <div class="card stat-card-3 text-white p-6 rounded-2xl">
+      <div id="securityScoreCard" class="card text-white p-6 rounded-2xl transition-all" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm opacity-90 font-medium">Security Score</p>
             <h3 id="security-score" class="text-3xl font-bold mt-2">{{ security_score }}%</h3>
-            <p class="text-xs opacity-75 mt-1">Excellent protection</p>
+            <p id="securityScoreText" class="text-xs opacity-75 mt-1">Excellent protection</p>
           </div>
           <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
-            <i class="fas fa-check-circle text-3xl"></i>
+            <i id="securityScoreIcon" class="fas fa-shield-alt text-3xl"></i>
           </div>
         </div>
       </div>
     </div>
     
     <!-- Main Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       
       <!-- Passwords List -->
-      <div class="lg:col-span-2 flex">
-        <div class="card p-6 rounded-2xl flex-1 flex flex-col">
+      <div class="lg:col-span-2">
+        <div class="card p-6 rounded-2xl">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-xl font-bold text-primary">Your Passwords</h2>
               <p class="text-sm text-secondary mt-1">Manage all your secure credentials</p>
             </div>
-            <button onclick="openAddPasswordModal()" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2">
-              <i class="fas fa-plus"></i>
-              <span>Add Password</span>
-            </button>
+            <div class="flex gap-3">
+              <button onclick="openImportModal()" class="btn-secondary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2" style="background: var(--bg-primary); color: var(--text-primary); border: 2px solid var(--border);">
+                <i class="fas fa-file-import"></i>
+                <span>Import</span>
+              </button>
+              <button onclick="openDeleteAllModal()" class="btn-secondary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2" style="background: var(--bg-primary); color: #EF4444; border: 2px solid rgba(239, 68, 68, 0.3);">
+                <i class="fas fa-trash-alt"></i>
+                <span>Delete All</span>
+              </button>
+              <button onclick="openAddPasswordModal()" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2">
+                <i class="fas fa-plus"></i>
+                <span>Add Password</span>
+              </button>
+            </div>
           </div>
           
           <!-- Password Items -->
-          <div id="password-list" class="space-y-3 flex-1 flex flex-col">
+          <div id="password-list" class="space-y-3 overflow-y-auto" style="max-height: 500px;">
             {% if passwords %}
               {% for password in passwords %}
               <div class="card p-4 rounded-xl flex items-center justify-between group hover:shadow-lg transition-shadow" data-password-id="{{ password.id }}" data-website="{{ password.website }}" data-username="{{ password.username }}">
@@ -745,7 +849,7 @@
               {% endfor %}
             {% else %}
             <!-- Empty State -->
-            <div class="text-center py-16 empty-state flex-1 flex flex-col items-center justify-center">
+            <div class="text-center py-16 empty-state flex flex-col items-center justify-center">
               <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
                 <i class="fas fa-lock text-4xl" style="color: var(--accent);"></i>
               </div>
@@ -762,7 +866,7 @@
       </div>
       
       <!-- Sidebar -->
-      <div class="space-y-6">
+      <div class="lg:col-span-1 space-y-6">
         
         <!-- Quick Actions -->
         <div class="card p-6 rounded-2xl">
@@ -778,7 +882,7 @@
               </div>
             </button>
             
-            <button class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
+            <button onclick="openImportModal()" class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
               <div class="w-10 h-10 rounded-lg bg-green-500 bg-opacity-10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
                 <i class="fas fa-file-import"></i>
               </div>
@@ -841,7 +945,7 @@
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="text-center md:text-left">
             <p class="text-sm" style="color: var(--text-secondary);">
-              © 5 <span class="font-semibold" style="color: var(--text-primary);">Cipher Vault</span>. All rights reserved.
+              © 2025 <span class="font-semibold" style="color: var(--text-primary);">Cipher Vault</span>. All rights reserved.
             </p>
           </div>
           <div class="flex items-center gap-6">
@@ -852,6 +956,160 @@
         </div>
       </div>
     </footer>
+  </div>
+  
+  <!-- Import Passwords Modal -->
+  <div id="importModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold text-primary">Import Passwords</h3>
+        <button onclick="closeImportModal()" class="icon-wrapper transition-colors">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        <!-- Info Box -->
+        <div class="p-4 rounded-xl" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+            <div class="text-sm" style="color: var(--text-primary);">
+              <p class="font-semibold mb-2">How to export from Google Password Manager:</p>
+              <ol class="space-y-1 text-xs" style="color: var(--text-secondary);">
+                <li>1. Go to <a href="https://passwords.google.com" target="_blank" class="text-blue-500 hover:underline">passwords.google.com</a></li>
+                <li>2. Click Settings (gear icon)</li>
+                <li>3. Click "Export passwords"</li>
+                <li>4. Download the CSV file</li>
+                <li>5. Upload it here</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        
+        <!-- File Upload -->
+        <form id="importForm" enctype="multipart/form-data" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">CSV File</label>
+            <div class="relative">
+              <input type="file" id="importFile" accept=".csv" class="modern-input w-full rounded-xl px-4 py-3 text-sm outline-none" required>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Your Account Password</label>
+            <div class="relative">
+              <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                <i class="fas fa-lock"></i>
+              </div>
+              <input type="password" id="importAccountPassword" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Enter your account password" required>
+            </div>
+            <p class="text-xs mt-2" style="color: var(--text-secondary);">Required to encrypt imported passwords</p>
+          </div>
+          
+          <div id="importProgress" class="hidden">
+            <div class="flex items-center gap-3 p-3 rounded-xl" style="background: rgba(59, 130, 246, 0.1);">
+              <div class="animate-spin">
+                <i class="fas fa-spinner text-blue-500"></i>
+              </div>
+              <span class="text-sm font-medium" style="color: var(--text-primary);">Importing passwords...</span>
+            </div>
+          </div>
+          
+          <div class="flex gap-3 pt-4">
+            <button type="button" onclick="closeImportModal()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all" style="background: var(--bg-primary); color: var(--text-primary); border: 2px solid var(--border);">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
+              Import
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Confirm Password Modal (for delete operations) -->
+  <div id="confirmPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold text-primary">Confirm Your Identity</h3>
+        <button onclick="closeConfirmPasswordModal()" class="icon-wrapper transition-colors">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <p class="text-sm text-secondary mb-6">Please enter your account password to confirm this action.</p>
+      
+      <form id="confirmPasswordForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Account Password</label>
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+              <i class="fas fa-lock"></i>
+            </div>
+            <input type="password" id="confirmAccountPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter your password" required>
+            <button type="button" onclick="toggleConfirmPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
+              <i id="confirmPasswordToggleIcon" class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="closeConfirmPasswordModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
+            Confirm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Delete All Passwords Modal -->
+  <div id="deleteAllModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold" style="color: #EF4444;">Delete All Passwords</h3>
+        <button onclick="closeDeleteAllModal()" class="icon-wrapper transition-colors">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="mb-6 p-4 rounded-xl" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
+        <div class="flex items-start gap-3">
+          <i class="fas fa-exclamation-triangle text-2xl" style="color: #EF4444;"></i>
+          <div>
+            <p class="font-semibold mb-1" style="color: #EF4444;">Warning: This action cannot be undone!</p>
+            <p class="text-sm text-secondary">All {{ total_passwords }} passwords in your vault will be permanently deleted.</p>
+          </div>
+        </div>
+      </div>
+      
+      <form id="deleteAllForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Account Password</label>
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
+              <i class="fas fa-lock"></i>
+            </div>
+            <input type="password" id="deleteAllPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter your password to confirm" required>
+            <button type="button" onclick="toggleDeleteAllPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
+              <i id="deleteAllPasswordToggleIcon" class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="closeDeleteAllModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
+            Cancel
+          </button>
+          <button type="submit" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+            Delete All
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
   
   <!-- Add Password Modal -->
@@ -1026,52 +1284,117 @@
   
   <!-- Generate Password Modal -->
   <div id="generatePasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-    <div class="modal bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+    <div class="modal rounded-3xl shadow-2xl max-w-lg w-full mx-4 p-8" style="background: var(--bg-secondary);">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-2xl font-bold text-gray-800">Password Generator</h3>
-        <button onclick="closeGeneratePasswordModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
+            <i class="fas fa-key text-white"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-primary">Password Generator</h3>
+        </div>
+        <button onclick="closeGeneratePasswordModal()" class="icon-wrapper transition-colors">
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
       
-      <div class="space-y-4">
-        <div class="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
-          <div class="flex items-center justify-between">
-            <code id="generatedPassword" class="text-lg font-mono text-gray-800 flex-1">Cy$9mK#nQ2pL</code>
-            <button onclick="copyGeneratedPassword()" class="copy-btn p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-all">
-              <i class="fas fa-copy"></i>
-            </button>
+      <div class="space-y-6">
+        <!-- Generated Password Display -->
+        <div class="relative">
+          <div class="p-5 rounded-2xl border-2 transition-all" style="background: var(--bg-primary); border-color: var(--border);">
+            <div class="flex items-center gap-3">
+              <div class="flex-1 overflow-hidden">
+                <label class="text-xs font-semibold text-secondary uppercase tracking-wide mb-2 block">Generated Password</label>
+                <code id="generatedPassword" class="text-xl font-mono text-primary font-bold break-all block">Cy$9mK#nQ2pL</code>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button onclick="regeneratePassword()" class="w-12 h-12 rounded-xl text-white hover:shadow-lg transition-all flex items-center justify-center" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);" title="Generate New">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <button onclick="copyGeneratedPassword()" class="w-12 h-12 rounded-xl transition-all flex items-center justify-center hover:shadow-lg" style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white;" title="Copy">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Length: <span id="lengthValue">12</span></label>
-          <input type="range" id="passwordLength" min="8" max="32" value="12" class="w-full">
+        <!-- Length Slider -->
+        <div class="p-4 rounded-xl" style="background: var(--bg-primary);">
+          <div class="flex items-center justify-between mb-3">
+            <label class="text-sm font-semibold text-primary">Password Length</label>
+            <div class="flex items-center gap-2">
+              <span id="lengthValue" class="text-2xl font-bold" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">16</span>
+              <span class="text-sm text-secondary">characters</span>
+            </div>
+          </div>
+          <input type="range" id="passwordLength" min="8" max="32" value="16" class="w-full h-2 rounded-full appearance-none cursor-pointer" style="background: linear-gradient(to right, #6366F1 0%, #6366F1 50%, var(--border) 50%, var(--border) 100%);">
         </div>
         
+        <!-- Character Options -->
         <div class="space-y-2">
-          <label class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-            <span class="text-sm font-medium text-gray-700">Uppercase Letters (A-Z)</span>
-            <input type="checkbox" checked class="w-5 h-5 text-purple-600 rounded">
+          <label class="text-sm font-semibold text-primary block mb-3">Include Characters</label>
+          
+          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md" style="background: var(--bg-primary); border: 2px solid var(--border);">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(99, 102, 241, 0.1);">
+                <span class="text-lg font-bold" style="color: #6366F1;">Aa</span>
+              </div>
+              <div>
+                <span class="text-sm font-semibold text-primary block">Uppercase & Lowercase</span>
+                <span class="text-xs text-secondary">A-Z, a-z</span>
+              </div>
+            </div>
+            <input type="checkbox" id="includeLetters" checked class="w-5 h-5 rounded" style="accent-color: #6366F1;">
           </label>
-          <label class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-            <span class="text-sm font-medium text-gray-700">Lowercase Letters (a-z)</span>
-            <input type="checkbox" checked class="w-5 h-5 text-purple-600 rounded">
+          
+          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md" style="background: var(--bg-primary); border: 2px solid var(--border);">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+                <span class="text-lg font-bold" style="color: #3B82F6;">123</span>
+              </div>
+              <div>
+                <span class="text-sm font-semibold text-primary block">Numbers</span>
+                <span class="text-xs text-secondary">0-9</span>
+              </div>
+            </div>
+            <input type="checkbox" id="includeNumbers" checked class="w-5 h-5 rounded" style="accent-color: #3B82F6;">
           </label>
-          <label class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-            <span class="text-sm font-medium text-gray-700">Numbers (0-9)</span>
-            <input type="checkbox" checked class="w-5 h-5 text-purple-600 rounded">
-          </label>
-          <label class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-            <span class="text-sm font-medium text-gray-700">Symbols (!@#$%^&*)</span>
-            <input type="checkbox" checked class="w-5 h-5 text-purple-600 rounded">
+          
+          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md" style="background: var(--bg-primary); border: 2px solid var(--border);">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(139, 92, 246, 0.1);">
+                <span class="text-lg font-bold" style="color: #8B5CF6;">@#$</span>
+              </div>
+              <div>
+                <span class="text-sm font-semibold text-primary block">Special Characters</span>
+                <span class="text-xs text-secondary">!@#$%^&*</span>
+              </div>
+            </div>
+            <input type="checkbox" id="includeSymbols" checked class="w-5 h-5 rounded" style="accent-color: #8B5CF6;">
           </label>
         </div>
         
-        <button onclick="regeneratePassword()" class="w-full btn-primary px-6 py-3 rounded-xl text-white font-semibold text-sm shadow-lg">
-          <i class="fas fa-sync-alt mr-2"></i>
-          Generate New Password
-        </button>
+        <!-- Info Box -->
+        <div class="info-box p-4 rounded-xl">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-lightbulb text-lg mt-0.5" style="color: #F59E0B;"></i>
+            <div>
+              <p class="text-xs font-semibold text-primary mb-1">Pro Tip</p>
+              <p class="text-xs text-secondary">For maximum security, use at least 16 characters with all character types enabled.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex gap-3">
+          <button onclick="closeGeneratePasswordModal()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border);">
+            Cancel
+          </button>
+          <button onclick="useGeneratedPassword()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white transition-all hover:shadow-xl" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
+            <i class="fas fa-check mr-2"></i>
+            Use Password
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1552,6 +1875,109 @@
       document.getElementById('addPasswordModal').classList.add('hidden');
     }
     
+    // Import Modal functions
+    function openImportModal() {
+      document.getElementById('importModal').classList.remove('hidden');
+      document.getElementById('importForm').reset();
+      document.getElementById('importProgress').classList.add('hidden');
+    }
+    
+    function closeImportModal() {
+      document.getElementById('importModal').classList.add('hidden');
+    }
+    
+    // Confirm Password Modal functions
+    function openConfirmPasswordModal() {
+      document.getElementById('confirmPasswordModal').classList.remove('hidden');
+      document.getElementById('confirmPasswordForm').reset();
+    }
+    
+    function closeConfirmPasswordModal() {
+      document.getElementById('confirmPasswordModal').classList.add('hidden');
+      document.getElementById('confirmPasswordForm').reset();
+      pendingDeletePasswordId = null;
+    }
+    
+    function toggleConfirmPassword() {
+      const input = document.getElementById('confirmAccountPassword');
+      const icon = document.getElementById('confirmPasswordToggleIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+    
+    // Delete All Modal functions
+    function openDeleteAllModal() {
+      const totalPasswords = parseInt(document.getElementById('total-passwords').textContent);
+      if (totalPasswords === 0) {
+        showToast('No Passwords', 'There are no passwords to delete.', 'error');
+        return;
+      }
+      document.getElementById('deleteAllModal').classList.remove('hidden');
+      document.getElementById('deleteAllForm').reset();
+    }
+    
+    function closeDeleteAllModal() {
+      document.getElementById('deleteAllModal').classList.add('hidden');
+      document.getElementById('deleteAllForm').reset();
+    }
+    
+    function toggleDeleteAllPassword() {
+      const input = document.getElementById('deleteAllPassword');
+      const icon = document.getElementById('deleteAllPasswordToggleIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+    
+    async function deleteAllPasswords(event) {
+      event.preventDefault();
+      
+      const accountPassword = document.getElementById('deleteAllPassword').value.trim();
+      
+      if (!accountPassword) {
+        showToast('Password Required', 'Please enter your account password.', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/delete_all_passwords', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ accountPassword })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          closeDeleteAllModal();
+          showToast('All Passwords Deleted', `Successfully deleted ${data.deleted_count} passwords.`, 'success');
+          
+          // Reload page after a short delay
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          showToast('Delete Failed', data.error, 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Delete Failed', 'Failed to delete passwords. Please try again.', 'error');
+      }
+    }
+    
     // Edit Password Modal functions
     function openEditPasswordModal(passwordId) {
       const passwordElement = document.querySelector(`[data-password-id="${passwordId}"]`);
@@ -1698,23 +2124,42 @@
       }
     }
     
-    // Delete password function
-    async function deletePassword(passwordId) {
-      // Show confirmation toast instead of default confirm
-      const confirmed = confirm('Are you sure you want to delete this password? This action cannot be undone.');
+    // Delete password function with authentication
+    let pendingDeletePasswordId = null;
+    
+    function deletePassword(passwordId) {
+      pendingDeletePasswordId = passwordId;
+      openConfirmPasswordModal();
+    }
+    
+    async function confirmDeletePassword() {
+      const accountPassword = document.getElementById('confirmAccountPassword').value.trim();
       
-      if (!confirmed) {
+      if (!accountPassword) {
+        showToast('Password Required', 'Please enter your account password.', 'error');
+        return;
+      }
+      
+      if (!pendingDeletePasswordId) {
+        showToast('Error', 'No password selected for deletion.', 'error');
         return;
       }
       
       try {
-        const response = await fetch(`/delete_password/${passwordId}`, {
-          method: 'DELETE'
+        const response = await fetch(`/delete_password/${pendingDeletePasswordId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ accountPassword })
         });
         
         const data = await response.json();
         
         if (data.success) {
+          // Close confirmation modal
+          closeConfirmPasswordModal();
+          
           // Update stats
           updateStats(data.stats);
           
@@ -1722,11 +2167,13 @@
           showToast('Password Deleted', 'The password has been permanently removed.', 'success');
           
           // Remove the password element with animation
-          const passwordElement = document.querySelector(`[data-password-id="${passwordId}"]`);
+          const passwordElement = document.querySelector(`[data-password-id="${pendingDeletePasswordId}"]`);
           if (passwordElement) {
             passwordElement.style.animation = 'slideOutRight 0.3s ease-in forwards';
             setTimeout(() => passwordElement.remove(), 300);
           }
+          
+          pendingDeletePasswordId = null;
           
           // Check if list is now empty
           setTimeout(() => {
@@ -1749,6 +2196,7 @@
       document.getElementById('total-passwords').textContent = stats.total_passwords;
       document.getElementById('weak-passwords').textContent = stats.weak_passwords;
       document.getElementById('security-score').textContent = stats.security_score + '%';
+      updateSecurityScoreColor(stats.security_score);
     }
     
     // View Password Modal functions
@@ -1851,6 +2299,74 @@
       if (editForm) {
         editForm.addEventListener('submit', editPassword);
       }
+      
+      const confirmPasswordForm = document.getElementById('confirmPasswordForm');
+      if (confirmPasswordForm) {
+        confirmPasswordForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          confirmDeletePassword();
+        });
+      }
+      
+      const deleteAllForm = document.getElementById('deleteAllForm');
+      if (deleteAllForm) {
+        deleteAllForm.addEventListener('submit', deleteAllPasswords);
+      }
+      
+      const importForm = document.getElementById('importForm');
+      if (importForm) {
+        importForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const fileInput = document.getElementById('importFile');
+          const passwordInput = document.getElementById('importAccountPassword');
+          const progressDiv = document.getElementById('importProgress');
+          
+          if (!fileInput.files[0]) {
+            showToast('Please select a CSV file', 'error');
+            return;
+          }
+          
+          const formData = new FormData();
+          formData.append('file', fileInput.files[0]);
+          formData.append('accountPassword', passwordInput.value);
+          
+          try {
+            progressDiv.classList.remove('hidden');
+            
+            const response = await fetch('/import_passwords', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const data = await response.json();
+            
+            progressDiv.classList.add('hidden');
+            
+            if (data.success) {
+              showToast(`Successfully imported ${data.imported} passwords! (${data.skipped} skipped)`, 'success');
+              closeImportModal();
+              
+              // Update stats if provided
+              if (data.stats) {
+                document.getElementById('totalPasswords').textContent = data.stats.total_passwords;
+                document.getElementById('weakPasswords').textContent = data.stats.weak_passwords;
+                document.getElementById('securityScore').textContent = data.stats.security_score + '%';
+                updateSecurityCircle(data.stats.security_score);
+              }
+              
+              // Reload page to show imported passwords without delay
+              location.reload();
+            } else {
+              showToast(data.error || 'Failed to import passwords', 'error');
+            }
+          } catch (error) {
+            progressDiv.classList.add('hidden');
+            console.error('Import error:', error);
+            showToast('An error occurred while importing passwords', 'error');
+          }
+        });
+      }
     });
     
     function openGeneratePasswordModal() {
@@ -1890,14 +2406,28 @@
       document.getElementById('password').value = password;
     }
     
-    // Generate password for modal
+    // Generate password for modal with options
     function regeneratePassword() {
-      const length = document.getElementById('passwordLength').value;
-      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+      const length = parseInt(document.getElementById('passwordLength').value);
+      const includeLetters = document.getElementById('includeLetters').checked;
+      const includeNumbers = document.getElementById('includeNumbers').checked;
+      const includeSymbols = document.getElementById('includeSymbols').checked;
+      
+      let charset = "";
+      if (includeLetters) charset += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      if (includeNumbers) charset += "0123456789";
+      if (includeSymbols) charset += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+      
+      if (charset === "") {
+        showToast('Please select at least one character type', 'warning');
+        return;
+      }
+      
       let password = "";
       for (let i = 0; i < length; i++) {
         password += charset.charAt(Math.floor(Math.random() * charset.length));
       }
+      
       document.getElementById('generatedPassword').textContent = password;
     }
     
@@ -1907,18 +2437,72 @@
       navigator.clipboard.writeText(password).then(() => {
         const btn = event.target.closest('button');
         const icon = btn.querySelector('i');
-        icon.classList.remove('fa-copy');
-        icon.classList.add('fa-check');
+        const originalClass = icon.className;
+        icon.className = 'fas fa-check';
+        showToast('Password copied to clipboard!', 'success');
         setTimeout(() => {
-          icon.classList.remove('fa-check');
-          icon.classList.add('fa-copy');
+          icon.className = originalClass;
         }, 2000);
       });
     }
     
-    // Update length value
+    // Use generated password in add password form
+    function useGeneratedPassword() {
+      const password = document.getElementById('generatedPassword').textContent;
+      document.getElementById('password').value = password;
+      closeGeneratePasswordModal();
+      showToast('Password inserted into form', 'success');
+    }
+    
+    // Update length value and slider background
     document.getElementById('passwordLength')?.addEventListener('input', function() {
       document.getElementById('lengthValue').textContent = this.value;
+      const percentage = ((this.value - this.min) / (this.max - this.min)) * 100;
+      this.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`;
+      regeneratePassword();
+    });
+    
+    // Regenerate on checkbox change
+    document.getElementById('includeLetters')?.addEventListener('change', regeneratePassword);
+    document.getElementById('includeNumbers')?.addEventListener('change', regeneratePassword);
+    document.getElementById('includeSymbols')?.addEventListener('change', regeneratePassword);
+    
+    // Update security score card color
+    function updateSecurityScoreColor(score) {
+      const card = document.getElementById('securityScoreCard');
+      const text = document.getElementById('securityScoreText');
+      const icon = document.getElementById('securityScoreIcon');
+      
+      if (score >= 80) {
+        card.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+        text.textContent = 'Excellent protection';
+        icon.className = 'fas fa-shield-alt text-3xl';
+      } else if (score >= 60) {
+        card.style.background = 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)';
+        text.textContent = 'Good security';
+        icon.className = 'fas fa-shield-alt text-3xl';
+      } else if (score >= 40) {
+        card.style.background = 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)';
+        text.textContent = 'Fair protection';
+        icon.className = 'fas fa-exclamation-triangle text-3xl';
+      } else if (score >= 20) {
+        card.style.background = 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)';
+        text.textContent = 'Weak security';
+        icon.className = 'fas fa-exclamation-circle text-3xl';
+      } else {
+        card.style.background = 'linear-gradient(135deg, #DC2626 0%, #991B1B 100%)';
+        text.textContent = 'Critical - Action needed';
+        icon.className = 'fas fa-skull-crossbones text-3xl';
+      }
+    }
+    
+    // Initialize security score color on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const score = parseInt(document.getElementById('security-score').textContent);
+      updateSecurityScoreColor(score);
+      
+      // Initialize generator
+      regeneratePassword();
     });
 
     // Settings Modal Functions

@@ -181,3 +181,34 @@ body {
     display: none;
   }
 }
+
+/* Dashboard Layout */
+#password-list {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 8px;
+  min-height: 200px;
+}
+
+/* Ensure password list card has proper height */
+.lg\:col-span-2 .card {
+  min-height: 400px;
+}
+
+/* Quick Actions spacing */
+.quick-action {
+  background: rgba(102, 126, 234, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.quick-action:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+/* Sidebar sticky positioning */
+.lg\:col-span-1 {
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+}

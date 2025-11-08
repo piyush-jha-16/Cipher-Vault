@@ -3,11 +3,29 @@ from flask_bcrypt import Bcrypt
 import sqlite3
 import os
 import re
+import csv
+import io
+from dotenv import load_dotenv
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from google_auth_oauthlib.flow import Flow
 from utils.encryption import encrypt_password, decrypt_password, generate_salt
 
+# Load environment variables from .env file
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = "super_secret_key"
+app.secret_key = os.environ.get("SECRET_KEY", "super_secret_key")
 bcrypt = Bcrypt(app)
+
+# Google OAuth Configuration
+# You'll need to set these environment variables or replace with your values
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
+
+# OAuth2 Flow configuration
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development! Remove in production with HTTPS
 
 # Database helper function
 def get_db_connection():
@@ -58,7 +76,9 @@ def init_db():
                         username TEXT UNIQUE NOT NULL,
                         email TEXT UNIQUE,
                         password TEXT NOT NULL,
-                        salt TEXT NOT NULL
+                        salt TEXT NOT NULL,
+                        google_id TEXT UNIQUE,
+                        display_name TEXT
                     )''')
     conn.execute('''CREATE TABLE IF NOT EXISTS passwords (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -139,19 +159,22 @@ def auth():
             
         elif form_type == 'login':
             if not username or not password:
-                return render_template('auth.html', error='Username and password are required')
+                return render_template('auth.html', error='Username/Email and password are required')
             
             try:
                 conn = get_db_connection()
-                cur = conn.execute("SELECT password FROM users WHERE username=?", (username,))
+                # Check if input is email or username
+                # Try to find user by username first, then by email
+                cur = conn.execute("SELECT username, password FROM users WHERE username=? OR email=?", (username, username))
                 data = cur.fetchone()
                 conn.close()
                 
                 if data and bcrypt.check_password_hash(data['password'], password):
-                    session['username'] = username
+                    # Store the actual username in session (not email)
+                    session['username'] = data['username']
                     return redirect(url_for('dashboard'))
                 else:
-                    return render_template('auth.html', error='Invalid username or password')
+                    return render_template('auth.html', error='Invalid username/email or password')
             except Exception as e:
                 print(f"Login error: {e}")
                 return render_template('auth.html', error='An error occurred. Please try again.')
@@ -346,12 +369,23 @@ def delete_password(password_id):
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
     
     try:
+        data = request.get_json()
+        account_password = data.get('accountPassword', '').strip()
+        
+        if not account_password:
+            return jsonify({'success': False, 'error': 'Account password is required'}), 400
+        
         conn = get_db_connection()
-        user = conn.execute("SELECT id FROM users WHERE username=?", (session['username'],)).fetchone()
+        user = conn.execute("SELECT id, password FROM users WHERE username=?", (session['username'],)).fetchone()
         
         if not user:
             conn.close()
             return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        # Verify account password
+        if not bcrypt.check_password_hash(user['password'], account_password):
+            conn.close()
+            return jsonify({'success': False, 'error': 'Incorrect password'}), 401
         
         user_id = user['id']
         
@@ -537,6 +571,379 @@ def change_password():
     except Exception as e:
         print(f"Change password error: {e}")
         return jsonify({'success': False, 'error': 'An error occurred while changing password'}), 500
+
+@app.route('/admin/users')
+def list_users():
+    """
+    Admin route to list all registered users
+    Note: In production, add authentication/authorization to restrict access
+    """
+    try:
+        conn = get_db_connection()
+        users = conn.execute("""
+            SELECT 
+                u.id,
+                u.username,
+                u.email,
+                u.display_name,
+                COUNT(p.id) as password_count,
+                MIN(p.created_at) as first_password_added,
+                MAX(p.created_at) as last_password_added
+            FROM users u
+            LEFT JOIN passwords p ON u.id = p.user_id
+            GROUP BY u.id
+            ORDER BY u.id DESC
+        """).fetchall()
+        conn.close()
+        
+        # Convert to list of dicts for easier display
+        user_list = []
+        for user in users:
+            user_list.append({
+                'id': user['id'],
+                'username': user['username'],
+                'email': user['email'],
+                'display_name': user['display_name'] or user['username'],
+                'password_count': user['password_count'],
+                'first_password_added': user['first_password_added'],
+                'last_password_added': user['last_password_added']
+            })
+        
+        return jsonify({
+            'success': True,
+            'total_users': len(user_list),
+            'users': user_list
+        })
+    
+    except Exception as e:
+        print(f"List users error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred'}), 500
+
+@app.route('/auth/google')
+def google_login():
+    """Initiate Google OAuth flow"""
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        return jsonify({'success': False, 'error': 'Google OAuth not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.'}), 500
+    
+    # Create flow instance to manage OAuth flow
+    flow = Flow.from_client_config(
+        {
+            "web": {
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": [url_for('google_callback', _external=True)]
+            }
+        },
+        scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
+    )
+    
+    flow.redirect_uri = url_for('google_callback', _external=True)
+    
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true',
+        prompt='select_account'
+    )
+    
+    session['oauth_state'] = state
+    return redirect(authorization_url)
+
+@app.route('/auth/google/callback')
+def google_callback():
+    """Handle Google OAuth callback"""
+    try:
+        if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+            return redirect(url_for('auth', error='Google OAuth not configured'))
+        
+        # Verify state to prevent CSRF
+        state = session.get('oauth_state')
+        if not state or state != request.args.get('state'):
+            return redirect(url_for('auth', error='Invalid state parameter'))
+        
+        # Create flow instance
+        flow = Flow.from_client_config(
+            {
+                "web": {
+                    "client_id": GOOGLE_CLIENT_ID,
+                    "client_secret": GOOGLE_CLIENT_SECRET,
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "redirect_uris": [url_for('google_callback', _external=True)]
+                }
+            },
+            scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
+        )
+        
+        flow.redirect_uri = url_for('google_callback', _external=True)
+        
+        # Exchange authorization code for credentials
+        flow.fetch_token(authorization_response=request.url)
+        
+        # Get user info from Google
+        credentials = flow.credentials
+        request_session = google_requests.Request()
+        
+        id_info = id_token.verify_oauth2_token(
+            credentials.id_token,
+            request_session,
+            GOOGLE_CLIENT_ID
+        )
+        
+        google_id = id_info.get('sub')
+        email = id_info.get('email')
+        name = id_info.get('name', email.split('@')[0])
+        
+        # Check if user exists
+        conn = get_db_connection()
+        user = conn.execute("SELECT * FROM users WHERE google_id=? OR email=?", (google_id, email)).fetchone()
+        
+        if user:
+            # Update google_id if user logged in with email/password before
+            if not user['google_id']:
+                conn.execute("UPDATE users SET google_id=? WHERE id=?", (google_id, user['id']))
+                conn.commit()
+            session['username'] = user['username']
+            conn.close()
+            return redirect(url_for('dashboard'))
+        else:
+            # Create new user with Google account - but WITHOUT a password yet
+            # Generate a username from email
+            base_username = email.split('@')[0]
+            username = base_username
+            counter = 1
+            
+            # Ensure unique username
+            while conn.execute("SELECT id FROM users WHERE username=?", (username,)).fetchone():
+                username = f"{base_username}{counter}"
+                counter += 1
+            
+            # Store user info in session - they need to set password first
+            session['pending_oauth_user'] = {
+                'username': username,
+                'email': email,
+                'google_id': google_id,
+                'display_name': name
+            }
+            
+            conn.close()
+            # Redirect to set password page
+            return redirect(url_for('set_password_page'))
+        
+    except Exception as e:
+        print(f"Google OAuth error: {e}")
+        return redirect(url_for('auth', error='Failed to authenticate with Google. Please try again.'))
+
+@app.route('/set_password', methods=['GET', 'POST'])
+def set_password_page():
+    """Page for new OAuth users to set their password"""
+    # Check if user has pending OAuth account
+    if 'pending_oauth_user' not in session:
+        return redirect(url_for('auth'))
+    
+    if request.method == 'POST':
+        password = request.form.get('password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+        
+        # Validation
+        if not password or not confirm_password:
+            return render_template('set_password.html', error='Both password fields are required')
+        
+        if password != confirm_password:
+            return render_template('set_password.html', error='Passwords do not match')
+        
+        if len(password) < 8:
+            return render_template('set_password.html', error='Password must be at least 8 characters long')
+        
+        # Create the user account with the password
+        try:
+            pending_user = session['pending_oauth_user']
+            
+            hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+            salt = generate_salt()
+            
+            conn = get_db_connection()
+            conn.execute(
+                "INSERT INTO users (username, email, password, salt, google_id, display_name) VALUES (?, ?, ?, ?, ?, ?)",
+                (pending_user['username'], pending_user['email'], hashed_pw, salt, pending_user['google_id'], pending_user['display_name'])
+            )
+            conn.commit()
+            conn.close()
+            
+            # Set session username and clear pending user
+            session['username'] = pending_user['username']
+            session.pop('pending_oauth_user', None)
+            
+            return redirect(url_for('dashboard'))
+            
+        except Exception as e:
+            print(f"Set password error: {e}")
+            return render_template('set_password.html', error='An error occurred. Please try again.')
+    
+    return render_template('set_password.html')
+
+@app.route('/import_passwords', methods=['POST'])
+def import_passwords():
+    """Import passwords from CSV file (e.g., exported from Google Password Manager)"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+    
+    try:
+        # Check if file was uploaded
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'No file selected'}), 400
+        
+        if not file.filename.endswith('.csv'):
+            return jsonify({'success': False, 'error': 'Only CSV files are supported'}), 400
+        
+        # Get account password for encryption
+        account_password = request.form.get('accountPassword', '').strip()
+        
+        if not account_password:
+            return jsonify({'success': False, 'error': 'Account password is required'}), 400
+        
+        # Get user info
+        conn = get_db_connection()
+        user = conn.execute("SELECT id, password, salt FROM users WHERE username=?", 
+                           (session['username'],)).fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        # Verify account password
+        if not bcrypt.check_password_hash(user['password'], account_password):
+            conn.close()
+            return jsonify({'success': False, 'error': 'Invalid account password'}), 401
+        
+        user_id = user['id']
+        salt = user['salt']
+        
+        # Read and parse CSV file
+        stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+        csv_reader = csv.DictReader(stream)
+        
+        imported_count = 0
+        skipped_count = 0
+        errors = []
+        
+        # Expected CSV format from Google Password Manager:
+        # name,url,username,password
+        for row in csv_reader:
+            try:
+                # Handle different CSV formats (Google uses 'name', 'url', 'username', 'password')
+                website = row.get('name') or row.get('url') or row.get('website', '').strip()
+                username = row.get('username', '').strip()
+                password = row.get('password', '').strip()
+                
+                if not website or not username or not password:
+                    skipped_count += 1
+                    continue
+                
+                # Check if password already exists for this website
+                existing = conn.execute(
+                    "SELECT id FROM passwords WHERE user_id=? AND website=? AND username=?",
+                    (user_id, website, username)
+                ).fetchone()
+                
+                if existing:
+                    skipped_count += 1
+                    continue
+                
+                # Check password strength
+                strength = check_password_strength(password)
+                
+                # Encrypt password
+                encrypted_password = encrypt_password(password, account_password, salt)
+                
+                # Insert into database
+                conn.execute(
+                    "INSERT INTO passwords (user_id, website, username, password, strength) VALUES (?, ?, ?, ?, ?)",
+                    (user_id, website, username, encrypted_password, strength)
+                )
+                
+                imported_count += 1
+                
+            except Exception as e:
+                errors.append(f"Row error: {str(e)}")
+                skipped_count += 1
+                continue
+        
+        conn.commit()
+        
+        # Get updated stats
+        passwords = conn.execute("SELECT strength FROM passwords WHERE user_id=?", (user_id,)).fetchall()
+        total_passwords = len(passwords)
+        weak_passwords = sum(1 for p in passwords if p['strength'] == 'weak')
+        security_score = max(0, 100 - (weak_passwords * 100 // total_passwords)) if total_passwords > 0 else 100
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'imported': imported_count,
+            'skipped': skipped_count,
+            'errors': errors[:5],  # Return first 5 errors only
+            'stats': {
+                'total_passwords': total_passwords,
+                'weak_passwords': weak_passwords,
+                'security_score': security_score
+            }
+        })
+        
+    except Exception as e:
+        print(f"Import passwords error: {e}")
+        return jsonify({'success': False, 'error': f'Failed to import passwords: {str(e)}'}), 500
+
+@app.route('/delete_all_passwords', methods=['DELETE'])
+def delete_all_passwords():
+    if 'username' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+    
+    try:
+        data = request.get_json()
+        account_password = data.get('accountPassword', '').strip()
+        
+        if not account_password:
+            return jsonify({'success': False, 'error': 'Account password is required'}), 400
+        
+        conn = get_db_connection()
+        user = conn.execute("SELECT id, password FROM users WHERE username=?", (session['username'],)).fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        # Verify account password
+        if not bcrypt.check_password_hash(user['password'], account_password):
+            conn.close()
+            return jsonify({'success': False, 'error': 'Incorrect password'}), 401
+        
+        user_id = user['id']
+        
+        # Get count of passwords to be deleted
+        count_result = conn.execute("SELECT COUNT(*) as count FROM passwords WHERE user_id=?", (user_id,)).fetchone()
+        deleted_count = count_result['count']
+        
+        # Delete all passwords for this user
+        conn.execute("DELETE FROM passwords WHERE user_id=?", (user_id,))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'deleted_count': deleted_count
+        })
+    
+    except Exception as e:
+        print(f"Delete all passwords error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred'}), 500
 
 @app.route('/logout')
 def logout():
