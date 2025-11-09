@@ -1,0 +1,17 @@
+# Tell GitHub to treat template files as a specific language or exclude them
+# This will help show Python and JavaScript more prominently
+
+# Mark HTML templates with embedded code as a different language
+templates/* linguist-vendored
+
+# Or alternatively, mark them as documentation
+# templates/* linguist-documentation
+
+# Ensure Python files are detected
+*.py linguist-detectable=true
+
+# Ensure JavaScript files are detected
+*.js linguist-detectable=true
+
+# Ensure CSS is included
+*.css linguist-detectable=true
