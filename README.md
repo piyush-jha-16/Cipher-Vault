@@ -7,65 +7,65 @@
   <img src="https://img.shields.io/badge/Flask-3.0.0-red" alt="Flask Badge"/>
 </div>
 
+A modern, secure password manager with military-grade encryption, Google OAuth integration, and a beautiful user interface. Store, manage, and organize your passwords with confidence.
+
+---
+
 ## ✨ Features
 
 ### 🔒 Advanced Security
-- **Fernet Encryption (AES-256)** - Military-grade password encryption with user-specific keys
-- **Bcrypt Password Hashing** - Secure account password storage
-- **User-Specific Salt** - Unique encryption salt for each user
-- **Re-authentication Required** - Must enter account password to view stored passwords
+- **Fernet Encryption (AES-256)** - Military-grade password encryption
+- **Bcrypt Password Hashing** - Secure account password storage with salt
+- **User-Specific Encryption** - Unique salt for each user
+- **Password Authentication** - Account password required for all sensitive operations
 - **Automatic Re-encryption** - All passwords re-encrypted when account password changes
-- **Password Strength Validation** - Real-time password quality feedback with updated criteria
-- **Secure Password Generator** - Cryptographically secure random passwords (8-32 characters)
+- **Password Strength Analysis** - Real-time password quality feedback
+  - **Strong**: 14+ chars with 3+ types OR 12+ chars with all 4 types OR 10+ chars with all 4 types including special
+  - **Medium**: 8+ chars with 3+ character types
+  - **Weak**: Everything else
 
 ### 🎨 Modern UI/UX
 - **Glass Morphism Design** - Contemporary, translucent interface
-- **Custom Toast Notifications** - Beautiful animated notifications (success/error/warning/info)
-- **Success Modal** - Shows encrypted password after saving with security tips
-- **View Password Modal** - Clean interface with re-authentication and security tips
-- **Settings Modal** - Comprehensive account management
-- **Dark/Light Theme** - Toggle between themes with persistent preference
-- **Responsive Design** - Perfect on desktop, tablet, and mobile
+- **Dark/Light Theme** - Toggle between themes with localStorage persistence
+- **Toast Notifications** - Beautiful animated success/error/warning/info messages
+- **Responsive Design** - Perfect on desktop, tablet, and mobile devices
 - **Smooth Animations** - Delightful transitions and micro-interactions
+- **Search Functionality** - Real-time password filtering by website or username
 
-### 💼 Dashboard Features
-- **Real-time Statistics** - Total passwords, weak passwords count, security score
-- **Password Management** - Add, edit, view, and delete passwords
-- **Search Functionality** - Quick password lookup
-- **Password Strength Indicator** - Visual strength meter with updated criteria:
-  - Strong: 14+ chars with 3 char types OR 12+ chars with all 4 types
-  - Medium: 10+ chars with 2+ char types
-  - Weak: Everything else
-- **Quick Actions** - Add password, generate password
-- **Security Score** - Monitor vault security health (0-100)
+### 💼 Password Management
+- **Add Passwords** - Save credentials with automatic strength detection
+- **Edit Passwords** - Update stored credentials anytime
+- **View Passwords** - Decrypt and view passwords with authentication
+- **Delete Passwords** - Remove individual passwords with confirmation
+- **Delete All** - Bulk delete all passwords with authentication
+- **Copy to Clipboard** - One-click password copying
+- **Password Generator** - Create strong random passwords (8-32 characters)
+  - Customizable character types (uppercase, lowercase, numbers, symbols)
+  - Real-time strength indicator
 
-### ⚙️ Settings & Account Management
-- **Display Name** - Customize your display name (shown in UI)
-- **Username** - Immutable login ID (shown but cannot be changed)
-- **Password Change** - Change account password with automatic re-encryption of all stored passwords
-- **Logout** - Secure session termination
+### 📊 Dashboard Statistics
+- **Total Passwords** - Track how many passwords you've stored
+- **Weak Passwords** - Monitor passwords that need strengthening
+- **Security Score** - Overall vault security rating (0-100)
+- **Password Strength Distribution** - Visual breakdown by strength level
 
-### 🎯 Recent Enhancements
+### 🔄 Import/Export
+- **Import Passwords** - Import from CSV files (Google Password Manager format supported)
+- **Export Passwords** - Download all passwords as CSV with authentication
+- **Automatic Encryption** - Imported passwords encrypted immediately
 
-#### Encryption System
-- Implemented Fernet (AES-256) encryption for stored passwords
-- Each user has a unique salt stored in the database
-- Encryption key derived from user's account password + salt
-- Passwords encrypted before storage, decrypted only when viewed
-- Re-authentication required to view passwords
+### 🔐 Google OAuth Integration
+- **Sign in with Google** - Quick authentication using Google account
+- **OAuth Password Setup** - First-time users set account password for encryption
+- **Account Linking** - Link Google account to existing email accounts
 
-#### UI Improvements
-- Replaced default JavaScript alerts with custom toast notifications
-- Success modal shows encrypted password after saving
-- View password modal redesigned with security tips
-- Settings modal with profile, security, and danger zone sections
-- All modals match the application's design language
+### ⚙️ Account Management
+- **Display Name** - Customize your display name
+- **Username** - Unique login identifier (immutable)
+- **Change Password** - Update account password with automatic password re-encryption
+- **Settings Modal** - Centralized account management
 
-#### Bug Fixes
-- Fixed password visibility toggle to work with all password fields
-- Fixed password change form submission (wrapped in DOMContentLoaded)
-- Separated display name from username (username for login, display name for UI)
-- Fixed navbar update after display name change
+---
 
 ## 🚀 Getting Started
 
@@ -86,15 +86,33 @@ cd Cipher-Vault
 pip install -r requirements.txt
 ```
 
-3. **Run the Application**
+3. **Configure Google OAuth (Optional)**
+
+Create a `.env` file in the root directory:
+```env
+SECRET_KEY=your-secret-key-here
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
+
+To get Google OAuth credentials:
+- Go to [Google Cloud Console](https://console.cloud.google.com/)
+- Create a new project or select existing one
+- Enable Google+ API
+- Create OAuth 2.0 credentials
+- Add `http://127.0.0.1:5000/auth/google/callback` as authorized redirect URI
+
+4. **Run the Application**
 ```bash
 python app.py
 ```
 
-4. **Access the Application**
+5. **Access the Application**
 ```
 Open your browser and navigate to: http://127.0.0.1:5000
 ```
+
+---
 
 ## 📦 Project Structure
 
@@ -102,21 +120,23 @@ Open your browser and navigate to: http://127.0.0.1:5000
 Cipher-Vault/
 ├── app.py                          # Flask application with all routes
 ├── requirements.txt                # Python dependencies
-├── database.db                     # SQLite database (created on first run)
-├── migrate_database.py             # Migration script for salt column
-├── migrate_display_name.py         # Migration script for display_name column
+├── database.db                     # SQLite database (auto-created)
+├── .env                           # Environment variables (create this)
 ├── static/
 │   ├── css/
-│   │   └── style.css              # Custom styles and utilities
+│   │   └── style.css              # Custom styles and theme variables
 │   └── js/
-│       └── script.js              # Password strength calculation
+│       └── script.js              # Client-side utilities
 ├── templates/
-│   ├── auth.html                  # Login/Register page
-│   ├── base.html                  # Base template (not currently used)
-│   └── dashboard.html             # Main dashboard with all features
+│   ├── auth.html                  # Login/Register page with OAuth
+│   ├── base.html                  # Base template
+│   ├── dashboard.html             # Main dashboard with all features
+│   └── set_password.html          # OAuth password setup page
 └── utils/
-    └── encryption.py              # Fernet encryption/decryption utilities
+    └── encryption.py              # Fernet encryption/decryption functions
 ```
+
+---
 
 ## 🗄️ Database Schema
 
@@ -124,14 +144,12 @@ Cipher-Vault/
 ```sql
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,        -- Login ID (immutable)
-    display_name TEXT,                    -- Display name (can be changed)
-    password TEXT NOT NULL,               -- Bcrypt hashed account password
-    email TEXT,                           -- User email (optional)
-    salt TEXT NOT NULL,                   -- Unique salt for encryption
-    is_verified INTEGER DEFAULT 0,
-    verification_code TEXT,
-    code_expiry TEXT
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE,
+    password TEXT NOT NULL,              -- Bcrypt hashed
+    salt TEXT NOT NULL,                  -- Unique encryption salt
+    google_id TEXT UNIQUE,               -- Google OAuth ID
+    display_name TEXT                    -- User's display name
 );
 ```
 
@@ -142,120 +160,123 @@ CREATE TABLE passwords (
     user_id INTEGER NOT NULL,
     website TEXT NOT NULL,
     username TEXT NOT NULL,
-    password TEXT NOT NULL,               -- Fernet encrypted password
-    strength TEXT NOT NULL,               -- weak/medium/strong
+    password TEXT NOT NULL,              -- Fernet encrypted
+    strength TEXT NOT NULL,              -- weak/medium/strong
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
 
+---
+
 ## 🔧 Technologies Used
 
 ### Backend
 - **Flask 3.0.0** - Web framework
-- **Flask-Bcrypt 1.0.1** - Password hashing for account passwords
-- **cryptography 41.0.7** - Fernet encryption for stored passwords
+- **Flask-Bcrypt 1.0.1** - Password hashing
+- **cryptography 41.0.7** - Fernet (AES-256) encryption
 - **SQLite** - Database
+- **google-auth** - Google OAuth authentication
+- **python-dotenv** - Environment variable management
 
 ### Frontend
-- **HTML5/CSS3** - Modern markup and styling
+- **HTML5/CSS3** - Modern semantic markup
 - **JavaScript (ES6+)** - Interactive features
-- **Tailwind CSS** (via CDN) - Utility-first CSS framework
-- **Font Awesome 6** - Icons
+- **Tailwind CSS** (via CDN) - Utility-first styling
+- **Font Awesome 6** - Icon library
+
+---
 
 ## 🔐 Security Architecture
 
-### Password Encryption Flow
+### Encryption Flow
 
-**When Adding/Editing Password:**
-1. User enters their account password for verification
-2. System verifies account password using bcrypt
-3. System retrieves user's unique salt from database
-4. Encryption key generated: `PBKDF2(account_password + salt, SHA256)`
-5. Password encrypted using Fernet with generated key
-6. Encrypted password stored in database
+**Adding/Editing Password:**
+1. User enters account password for verification
+2. Bcrypt verifies account password hash
+3. Encryption key derived: `PBKDF2(account_password + user_salt, SHA256)`
+4. Password encrypted with Fernet using derived key
+5. Encrypted password stored in database
 
-**When Viewing Password:**
-1. User must re-enter their account password
-2. System verifies account password
-3. System retrieves user's salt
-4. Same encryption key regenerated
-5. Password decrypted using Fernet
-6. Plain text password shown in modal
+**Viewing Password:**
+1. User re-authenticates with account password
+2. System verifies password
+3. Encryption key regenerated using same method
+4. Password decrypted with Fernet
+5. Plaintext displayed temporarily
 
-**When Changing Account Password:**
-1. User enters current and new password
-2. System verifies current password
-3. System fetches ALL stored passwords for the user
-4. Each password is:
-   - Decrypted using current password
-   - Re-encrypted using new password
-5. All passwords updated in database
-6. Account password hash updated
-7. User logged out (must login with new password)
+**Changing Account Password:**
+1. Current password verified
+2. All stored passwords decrypted with old key
+3. All passwords re-encrypted with new key
+4. Account password hash updated
+5. All passwords saved with new encryption
 
-### Security Best Practices Implemented
+### Security Features
 
-✅ **No Plain Text Storage** - Passwords always encrypted before storage  
-✅ **Key Derivation** - Encryption keys derived from user password (never stored)  
-✅ **Unique Salts** - Each user has a unique salt for key derivation  
-✅ **Re-authentication** - Account password required to view passwords  
-✅ **Session Security** - Flask session management with secret key  
-✅ **Password Strength Validation** - Both client and server-side  
-✅ **Automatic Re-encryption** - When account password changes  
-✅ **Input Validation** - XSS prevention with HTML escaping  
+✅ **Zero-Knowledge Architecture** - Encryption keys never stored  
+✅ **Per-User Encryption** - Unique salt for each user  
+✅ **Re-authentication** - Password required for sensitive operations  
+✅ **Session Security** - Secure Flask sessions with secret key  
+✅ **Input Sanitization** - XSS protection via Jinja2 escaping  
+✅ **Password Strength Validation** - Client and server-side  
+✅ **Secure Password Generation** - Cryptographically random passwords  
 
-## 🎨 UI Components
+---
+
+## 🎨 Key Features
+
+### Search Functionality
+Real-time search filters passwords by website name or username as you type. Shows "No results found" message when no matches exist.
+
+### Quick Actions
+- **Import Passwords** - Bulk import from CSV
+- **Export Data** - Download encrypted backup
+- **Delete All** - Bulk delete with authentication
+
+### Theme System
+Dark and light themes with smooth transitions. Theme preference persists across sessions using localStorage.
 
 ### Toast Notifications
-- **Success** - Green with checkmark icon
-- **Error** - Red with X icon
-- **Warning** - Yellow/orange with exclamation icon
-- **Info** - Blue with info icon
-- Smooth slide-in/slide-out animations (300ms)
+Custom notification system replacing browser alerts:
+- Success (green), Error (red), Warning (orange), Info (blue)
 - Auto-dismiss after 3 seconds
+- Smooth animations
 
-### Modals
-- **Add/Edit Password** - Form with account password verification
-- **View Password** - Shows website, username, decrypted password, security tip
-- **Success Modal** - Shows encrypted password after saving
-- **Password Generator** - Customizable length (8-32 characters)
-- **Settings Modal** - Profile, security, and logout sections
+---
 
 ## 📱 Responsive Design
 
-- **Mobile (< 640px)**: Single column layout, touch-optimized
+- **Mobile (< 640px)**: Optimized single column layout
 - **Tablet (640px - 1024px)**: Two column grid
-- **Desktop (> 1024px)**: Three column grid with full features
-- **Touch Friendly**: Large buttons and input fields
+- **Desktop (> 1024px)**: Full three column layout
+- **Touch Optimized**: Large tap targets and swipe-friendly
 
-## 🎯 Future Enhancements
+---
 
-- [ ] Two-Factor Authentication (2FA)
-- [ ] Password breach detection (Have I Been Pwned API)
-- [ ] Biometric authentication
-- [ ] Browser extension
-- [ ] Password sharing with other users
-- [ ] Password categories/folders
-- [ ] Audit logs (track password access)
-- [ ] Export/Import passwords (encrypted backup)
-- [ ] Password history (track changes)
-- [ ] Email verification on signup
+## 🔒 Privacy & Security
 
-## � Known Issues
+- **No Telemetry** - No tracking or analytics
+- **Local Database** - All data stored locally in SQLite
+- **Open Source** - Full transparency, audit the code yourself
+- **No Third-Party Services** - Except optional Google OAuth
 
-- Flask-Mail is listed in requirements.txt but not currently used (planned for future email verification)
+---
 
 ## 📄 License
 
-This project is for educational and demonstration purposes.
+This project is open source and available for educational purposes.
 
 ## 👨‍💻 Developer
 
-**Piyush Jha** ([@piyush-jha-16](https://github.com/piyush-jha-16))
+**Piyush Jha**  
+GitHub: [@piyush-jha-16](https://github.com/piyush-jha-16)
+Instagram: [@_piyushjha16](https://instagram.com/_piyushjha16)
 
 ---
 
 <div align="center">
   <strong>Built with ❤️ for Secure Password Management</strong>
+  <br>
+  <sub>Protecting your digital life, one password at a time</sub>
 </div>

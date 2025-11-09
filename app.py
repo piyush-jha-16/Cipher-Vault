@@ -945,6 +945,82 @@ def delete_all_passwords():
         print(f"Delete all passwords error: {e}")
         return jsonify({'success': False, 'error': 'An error occurred'}), 500
 
+@app.route('/export_passwords', methods=['POST'])
+def export_passwords():
+    """Export all passwords to CSV file after authentication"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+    
+    try:
+        data = request.get_json()
+        account_password = data.get('accountPassword', '').strip()
+        
+        if not account_password:
+            return jsonify({'success': False, 'error': 'Account password is required'}), 400
+        
+        conn = get_db_connection()
+        user = conn.execute("SELECT id, password, salt FROM users WHERE username=?", 
+                           (session['username'],)).fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        # Verify account password
+        if not bcrypt.check_password_hash(user['password'], account_password):
+            conn.close()
+            return jsonify({'success': False, 'error': 'Incorrect password'}), 401
+        
+        user_id = user['id']
+        salt = user['salt']
+        
+        # Get all passwords for this user
+        passwords = conn.execute(
+            "SELECT website, username, password, strength, created_at FROM passwords WHERE user_id=? ORDER BY website",
+            (user_id,)
+        ).fetchall()
+        
+        conn.close()
+        
+        if not passwords:
+            return jsonify({'success': False, 'error': 'No passwords to export'}), 400
+        
+        # Create CSV in memory
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+        
+        # Write header
+        csv_writer.writerow(['Website', 'Username', 'Password', 'Strength', 'Created At'])
+        
+        # Write data - decrypt passwords before exporting
+        for pwd in passwords:
+            try:
+                decrypted_password = decrypt_password(pwd['password'], account_password, salt)
+                csv_writer.writerow([
+                    pwd['website'],
+                    pwd['username'],
+                    decrypted_password,
+                    pwd['strength'],
+                    pwd['created_at']
+                ])
+            except Exception as e:
+                print(f"Error decrypting password for {pwd['website']}: {e}")
+                continue
+        
+        # Get CSV content
+        csv_content = output.getvalue()
+        output.close()
+        
+        return jsonify({
+            'success': True,
+            'csv_data': csv_content,
+            'filename': f'cipher_vault_passwords_{session["username"]}.csv'
+        })
+    
+    except Exception as e:
+        print(f"Export passwords error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred while exporting passwords'}), 500
+
 @app.route('/logout')
 def logout():
     session.clear()
