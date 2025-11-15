@@ -25,7 +25,9 @@ GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
 # OAuth2 Flow configuration
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development! Remove in production with HTTPS
+# Only allow insecure transport in development (local), not in production
+if os.environ.get("FLASK_ENV") == "development":
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Database helper function
 def get_db_connection():
