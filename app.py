@@ -29,9 +29,17 @@ GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configura
 if os.environ.get("FLASK_ENV") == "development":
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+# Database configuration - use persistent disk on Render, local otherwise
+DB_DIR = os.environ.get("DATABASE_DIR", ".")
+DB_PATH = os.path.join(DB_DIR, "database.db")
+
+# Ensure database directory exists
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR)
+
 # Database helper function
 def get_db_connection():
-    conn = sqlite3.connect('database.db', timeout=10.0)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     conn.row_factory = sqlite3.Row
     return conn
 
