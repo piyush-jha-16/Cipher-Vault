@@ -1,5 +1,6 @@
 ﻿from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
 import sqlite3
 import os
 import re
@@ -17,6 +18,13 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "super_secret_key")
 bcrypt = Bcrypt(app)
+
+# Enable CORS for browser extension - allow all origins for extension to work
+CORS(app, 
+     resources={r"/api/*": {"origins": "*"}},
+     supports_credentials=True,
+     allow_headers=["Content-Type", "X-Session-ID"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 # Google OAuth Configuration
 # You'll need to set these environment variables or replace with your values
@@ -1035,6 +1043,184 @@ def export_passwords():
 def logout():
     session.clear()
     return redirect(url_for('auth'))
+
+# ==================== Extension API Endpoints ====================
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    """API endpoint for extension login"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not username or not password:
+            return jsonify({'success': False, 'error': 'Username and password are required'}), 400
+        
+        conn = get_db_connection()
+        user = conn.execute("SELECT username, password FROM users WHERE username=? OR email=?", 
+                           (username, username)).fetchone()
+        conn.close()
+        
+        if user and bcrypt.check_password_hash(user['password'], password):
+            # Create a session ID
+            import secrets
+            session_id = secrets.token_urlsafe(32)
+            
+            # Store session
+            session['username'] = user['username']
+            session['extension_session_id'] = session_id
+            
+            return jsonify({
+                'success': True,
+                'username': user['username'],
+                'sessionId': session_id
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Invalid username or password'}), 401
+    
+    except Exception as e:
+        print(f"API login error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred'}), 500
+
+@app.route('/api/passwords', methods=['GET'])
+def api_get_passwords():
+    """API endpoint to get all passwords for extension"""
+    session_id = request.headers.get('X-Session-ID')
+    
+    if not session_id or 'extension_session_id' not in session or session.get('extension_session_id') != session_id:
+        if 'username' not in session:
+            return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+    
+    try:
+        conn = get_db_connection()
+        user = conn.execute("SELECT id FROM users WHERE username=?", 
+                           (session['username'],)).fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        user_id = user['id']
+        
+        # Get all passwords (without decrypting them)
+        passwords = conn.execute(
+            "SELECT id, website, username, strength, created_at FROM passwords WHERE user_id=? ORDER BY created_at DESC",
+            (user_id,)
+        ).fetchall()
+        
+        conn.close()
+        
+        passwords_list = [{
+            'id': pwd['id'],
+            'website': pwd['website'],
+            'username': pwd['username'],
+            'strength': pwd['strength'],
+            'created_at': pwd['created_at']
+        } for pwd in passwords]
+        
+        return jsonify({
+            'success': True,
+            'passwords': passwords_list
+        })
+    
+    except Exception as e:
+        print(f"API get passwords error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred'}), 500
+
+@app.route('/api/decrypt_password', methods=['POST'])
+def api_decrypt_password():
+    """API endpoint to decrypt a specific password"""
+    session_id = request.headers.get('X-Session-ID')
+    
+    if not session_id or 'extension_session_id' not in session or session.get('extension_session_id') != session_id:
+        if 'username' not in session:
+            return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+    
+    try:
+        data = request.get_json()
+        password_id = data.get('passwordId')
+        account_password = data.get('accountPassword', '').strip()
+        
+        if not password_id or not account_password:
+            return jsonify({'success': False, 'error': 'Password ID and account password are required'}), 400
+        
+        conn = get_db_connection()
+        user = conn.execute("SELECT id, password, salt FROM users WHERE username=?", 
+                           (session['username'],)).fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        # Verify account password
+        if not bcrypt.check_password_hash(user['password'], account_password):
+            conn.close()
+            return jsonify({'success': False, 'error': 'Invalid account password'}), 401
+        
+        user_id = user['id']
+        salt = user['salt']
+        
+        # Get the encrypted password
+        password_data = conn.execute(
+            "SELECT password FROM passwords WHERE id=? AND user_id=?", 
+            (password_id, user_id)
+        ).fetchone()
+        
+        if not password_data:
+            conn.close()
+            return jsonify({'success': False, 'error': 'Password not found'}), 404
+        
+        # Decrypt the password
+        decrypted_password = decrypt_password(password_data['password'], account_password, salt)
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'password': decrypted_password
+        })
+    
+    except Exception as e:
+        print(f"API decrypt password error: {e}")
+        return jsonify({'success': False, 'error': 'Failed to decrypt password'}), 500
+
+@app.route('/api/delete_password', methods=['POST'])
+def api_delete_password():
+    """API endpoint to delete a password"""
+    session_id = request.headers.get('X-Session-ID')
+    
+    if not session_id or 'extension_session_id' not in session or session.get('extension_session_id') != session_id:
+        if 'username' not in session:
+            return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+    
+    try:
+        data = request.get_json()
+        password_id = data.get('passwordId')
+        
+        if not password_id:
+            return jsonify({'success': False, 'error': 'Password ID is required'}), 400
+        
+        conn = get_db_connection()
+        user = conn.execute("SELECT id FROM users WHERE username=?", 
+                           (session['username'],)).fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        user_id = user['id']
+        
+        # Delete password
+        conn.execute("DELETE FROM passwords WHERE id=? AND user_id=?", (password_id, user_id))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True})
+    
+    except Exception as e:
+        print(f"API delete password error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
