@@ -7,6 +7,13 @@ let passwordsList, searchInput, savePasswordForm;
 let currentUser = null;
 let allPasswords = [];
 
+// Error handler utility
+function handleError(error, context = '') {
+    console.error(`Error ${context}:`, error);
+    const message = error.message || 'An unexpected error occurred';
+    showNotification(`Error: ${message}`, 'error');
+}
+
 // Initialize popup
 document.addEventListener('DOMContentLoaded', async () => {
     initializeElements();
