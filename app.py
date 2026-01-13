@@ -51,6 +51,21 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+# Input validation helper
+def validate_email(email):
+    """
+    Validate email format
+    Returns: True if valid, False otherwise
+    """
+    if not email or '@' not in email:
+        return False
+    parts = email.split('@')
+    if len(parts) != 2 or not parts[0] or not parts[1]:
+        return False
+    if '.' not in parts[1] or parts[1].startswith('.') or parts[1].endswith('.'):
+        return False
+    return True
+
 # Password strength checker
 def check_password_strength(password):
     """
@@ -135,7 +150,7 @@ def auth():
                 return render_template('auth.html', error='All fields are required')
             if len(password) < 8:
                 return render_template('auth.html', error='Password must be at least 8 characters long')
-            if '@' not in email or '.' not in email.split('@')[1]:
+            if not validate_email(email):
                 return render_template('auth.html', error='Please enter a valid email address')
             
             hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
