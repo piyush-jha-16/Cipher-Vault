@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>CipherVault - Enterprise Security</title>
@@ -8,8 +9,11 @@
   <link rel="alternate icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/static/js/authScript.js" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/static/js/particles.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/enhancements.css">
   <style>
     :root {
       --primary: #0F172A;
@@ -24,7 +28,7 @@
       --bg-secondary: #FFFFFF;
       --border: #E2E8F0;
     }
-    
+
     [data-theme="dark"] {
       --primary: #F8FAFC;
       --secondary: #E2E8F0;
@@ -38,14 +42,14 @@
       --bg-secondary: #1E293B;
       --border: #334155;
     }
-    
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
-    
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
@@ -56,7 +60,7 @@
       align-items: center;
       justify-content: center;
     }
-    
+
     /* Enhanced animated grid background */
     body::before {
       content: '';
@@ -65,7 +69,7 @@
       height: 150%;
       top: -25%;
       left: -25%;
-      background-image: 
+      background-image:
         linear-gradient(rgba(59, 130, 246, 0.08) 2px, transparent 2px),
         linear-gradient(90deg, rgba(59, 130, 246, 0.08) 2px, transparent 2px),
         linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px),
@@ -75,31 +79,43 @@
       pointer-events: none;
       opacity: 0.6;
     }
-    
+
     /* Secondary grid layer for depth */
     body::after {
       content: '';
       position: absolute;
       width: 100%;
       height: 100%;
-      background-image: 
+      background-image:
         radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
       pointer-events: none;
       animation: pulse 8s ease-in-out infinite;
     }
-    
+
     @keyframes moveGrid {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(100px, 100px) rotate(1deg); }
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(100px, 100px) rotate(1deg);
+      }
     }
-    
+
     @keyframes pulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.6; }
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 0.6;
+      }
     }
-    
+
     /* Gradient orbs */
     .orb {
       position: absolute;
@@ -109,7 +125,7 @@
       pointer-events: none;
       animation: float 20s infinite ease-in-out;
     }
-    
+
     .orb-1 {
       width: 600px;
       height: 600px;
@@ -118,7 +134,7 @@
       right: -300px;
       animation-delay: 0s;
     }
-    
+
     .orb-2 {
       width: 500px;
       height: 500px;
@@ -127,7 +143,7 @@
       left: -250px;
       animation-delay: 5s;
     }
-    
+
     .orb-3 {
       width: 400px;
       height: 400px;
@@ -137,13 +153,23 @@
       transform: translate(-50%, -50%);
       animation-delay: 10s;
     }
-    
+
     @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(50px, -50px) scale(1.15); }
-      66% { transform: translate(-50px, 50px) scale(0.85); }
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(50px, -50px) scale(1.15);
+      }
+
+      66% {
+        transform: translate(-50px, 50px) scale(0.85);
+      }
     }
-    
+
     /* Professional card design */
     .auth-card {
       background: var(--bg-secondary);
@@ -156,7 +182,7 @@
       overflow-x: hidden;
       max-height: 85vh;
     }
-    
+
     .auth-card::before {
       content: '';
       position: absolute;
@@ -168,23 +194,29 @@
       background-size: 200% 100%;
       animation: shimmer 3s linear infinite;
     }
-    
+
     @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
     }
-    
+
     @keyframes slideUp {
       from {
         opacity: 0;
         transform: translateY(40px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-    
+
     /* Animated dot pattern overlay */
     .dot-pattern {
       position: absolute;
@@ -192,18 +224,23 @@
       height: 100%;
       pointer-events: none;
       opacity: 0.3;
-      background-image: 
+      background-image:
         radial-gradient(circle, rgba(59, 130, 246, 0.4) 1px, transparent 1px);
       background-size: 40px 40px;
       animation: dotFloat 15s linear infinite;
       z-index: 1;
     }
-    
+
     @keyframes dotFloat {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-40px); }
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-40px);
+      }
     }
-    
+
     /* Theme toggle */
     .theme-toggle {
       position: fixed;
@@ -222,17 +259,17 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
-    
+
     .theme-toggle:hover {
       transform: scale(1.05);
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
-    
+
     .theme-toggle i {
       color: var(--text-primary);
       font-size: 20px;
     }
-    
+
     /* Modern input styling */
     .modern-input {
       background: var(--bg-primary);
@@ -240,17 +277,17 @@
       color: var(--text-primary);
       transition: all 0.3s ease;
     }
-    
+
     .modern-input::placeholder {
       color: var(--text-secondary);
     }
-    
+
     .modern-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       transform: translateY(-1px);
     }
-    
+
     /* Professional button */
     .btn-primary {
       background: var(--accent);
@@ -260,7 +297,7 @@
       transition: all 0.3s ease;
       border: none;
     }
-    
+
     .btn-primary::before {
       content: '';
       position: absolute;
@@ -268,24 +305,24 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
       transition: left 0.5s;
     }
-    
+
     .btn-primary:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
     }
-    
+
     .btn-primary:hover::before {
       left: 100%;
     }
-    
+
     .btn-primary:active {
       transform: translateY(0);
     }
-    
+
     /* Tab styling */
     .tab-button {
       background: transparent;
@@ -296,11 +333,11 @@
       font-weight: 500 !important;
       font-size: 0.9rem !important;
     }
-    
+
     [data-theme="dark"] .tab-button {
       color: #E2E8F0 !important;
     }
-    
+
     .tab-button::after {
       content: '';
       position: absolute;
@@ -312,88 +349,91 @@
       background: var(--accent);
       transition: width 0.3s ease;
     }
-    
+
     .tab-button.active {
       color: #3B82F6 !important;
       font-weight: 700 !important;
     }
-    
+
     [data-theme="dark"] .tab-button.active {
       color: #60A5FA !important;
     }
-    
+
     .tab-button.active::after {
       width: 100%;
     }
-    
+
     .tab-button:hover:not(.active) {
       color: #3B82F6 !important;
     }
-    
+
     [data-theme="dark"] .tab-button:hover:not(.active) {
       color: #93C5FD !important;
     }
-    
+
     /* Form animations */
     .fade-enter {
       animation: fadeSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     @keyframes fadeSlideIn {
       from {
         opacity: 0;
         transform: translateX(20px);
       }
+
       to {
         opacity: 1;
         transform: translateX(0);
       }
     }
-    
+
     .fade-exit {
       animation: fadeSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     @keyframes fadeSlideOut {
       from {
         opacity: 1;
         transform: translateX(0);
       }
+
       to {
         opacity: 0;
         transform: translateX(-20px);
       }
     }
-    
+
     /* Icon styling */
     .icon-wrapper {
       color: var(--text-secondary);
       transition: all 0.3s ease;
     }
-    
+
     .icon-wrapper:hover {
       color: var(--accent);
       transform: scale(1.1);
     }
-    
+
     /* Alert styling */
     .alert {
       animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--bg-secondary);
       border-left-width: 4px;
     }
-    
+
     @keyframes slideDown {
       from {
         opacity: 0;
         transform: translateY(-10px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-    
+
     /* Strength indicator */
     .strength-bar {
       height: 3px;
@@ -401,123 +441,127 @@
       transition: all 0.3s ease;
       background: var(--border);
     }
-    
+
     /* Brand logo */
     .brand-icon {
       background: linear-gradient(135deg, #3B82F6, #8B5CF6);
       box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
     }
-    
+
     /* Text colors */
     .text-primary {
       color: var(--text-primary);
     }
-    
+
     .text-secondary {
       color: var(--text-secondary);
     }
-    
+
     /* Links */
     a {
       color: var(--accent);
       transition: color 0.3s ease;
     }
-    
+
     a:hover {
       color: var(--accent-hover);
     }
-    
+
     /* Feature list */
     .feature-item {
       background: var(--bg-primary);
       border: 1px solid var(--border);
       transition: all 0.3s ease;
     }
-    
+
     .feature-item:hover {
       transform: translateX(5px);
       border-color: var(--accent);
     }
-    
+
     /* Info box */
     .info-box {
       background: var(--bg-primary);
       border: 1px solid var(--border);
     }
-    
+
     [data-theme="dark"] .info-box {
       background: rgba(59, 130, 246, 0.1);
       border-color: rgba(59, 130, 246, 0.2);
     }
-    
+
     /* Checkbox */
     input[type="checkbox"] {
       accent-color: var(--accent);
     }
-    
+
     /* Label */
     label {
       color: var(--text-secondary);
     }
-    
+
     /* Ensure hidden class works */
     .hidden {
       display: none !important;
     }
-    
+
     /* Styled scrollbar for auth card */
     .auth-card::-webkit-scrollbar {
       width: 6px;
     }
-    
+
     .auth-card::-webkit-scrollbar-track {
       background: var(--bg-primary);
       border-radius: 0 12px 12px 0;
     }
-    
+
     .auth-card::-webkit-scrollbar-thumb {
       background: rgba(59, 130, 246, 0.4);
       border-radius: 3px;
     }
-    
+
     .auth-card::-webkit-scrollbar-thumb:hover {
       background: rgba(59, 130, 246, 0.6);
     }
   </style>
 </head>
+
 <body data-theme="light">
   <!-- Animated dot pattern -->
   <div class="dot-pattern"></div>
-  
+
   <!-- Gradient Orbs -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
-  
+
   <!-- Theme Toggle -->
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
     <i class="fas fa-moon" id="theme-icon"></i>
   </button>
-  
+
   <div class="container mx-auto px-4 relative z-10 w-full">
     <div class="w-full py-12">
       <div class="w-full max-w-6xl mx-auto">
-        
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          
+
           <!-- Left Side - Branding & Features -->
           <div class="space-y-8 lg:sticky lg:top-8">
             <div>
-              <h1 class="text-5xl mb-4" style="font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;">
-                <span style="color: var(--text-primary);">Cipher</span><span style="font-weight: 300; color: var(--accent);"> Vault</span>
+              <h1 class="text-5xl mb-4"
+                style="font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;">
+                <span style="color: var(--text-primary);">Cipher</span><span
+                  style="font-weight: 300; color: var(--accent);"> Vault</span>
               </h1>
               <p class="text-xl text-secondary mb-8">Secure Password Management</p>
             </div>
-            
+
             <div class="space-y-4">
               <div class="feature-item p-4 rounded-xl">
                 <div class="flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-lg bg-blue-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                  <div
+                    class="w-10 h-10 rounded-lg bg-blue-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-shield-alt text-blue-500"></i>
                   </div>
                   <div>
@@ -526,10 +570,11 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="feature-item p-4 rounded-xl">
                 <div class="flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-lg bg-green-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                  <div
+                    class="w-10 h-10 rounded-lg bg-green-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-key text-green-500"></i>
                   </div>
                   <div>
@@ -538,10 +583,11 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="feature-item p-4 rounded-xl">
                 <div class="flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                  <div
+                    class="w-10 h-10 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-random text-purple-500"></i>
                   </div>
                   <div>
@@ -550,10 +596,11 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="feature-item p-4 rounded-xl">
                 <div class="flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-lg bg-orange-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                  <div
+                    class="w-10 h-10 rounded-lg bg-orange-500 bg-opacity-10 flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-chart-line text-orange-500"></i>
                   </div>
                   <div>
@@ -563,18 +610,19 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="pt-4 px-4">
-              <div class="flex items-center gap-3 text-sm text-secondary p-3 rounded-lg" style="background: var(--bg-secondary);">
+              <div class="flex items-center gap-3 text-sm text-secondary p-3 rounded-lg"
+                style="background: var(--bg-secondary);">
                 <i class="fas fa-info-circle text-accent"></i>
                 <span>Your passwords are encrypted locally and never leave your device unencrypted.</span>
               </div>
             </div>
           </div>
-          
+
           <!-- Right Side - Auth Form -->
           <div class="auth-card rounded-3xl p-8 md:p-10">
-            
+
             <!-- Alert Messages -->
             {% if error %}
             <div class="alert border-red-500 text-red-700 p-4 mb-6 rounded-xl flex items-center gap-3">
@@ -582,62 +630,72 @@
               <span class="text-sm font-medium">{{ error }}</span>
             </div>
             {% endif %}
-            
+
             {% if success %}
             <div class="alert border-green-500 text-green-700 p-4 mb-6 rounded-xl flex items-center gap-3">
               <i class="fas fa-check-circle text-xl"></i>
               <span class="text-sm font-medium">{{ success }}</span>
             </div>
             {% endif %}
-            
+
             <!-- Tab Navigation -->
             <div class="flex gap-1 mb-8 border-b-2" style="border-color: var(--border);">
-              <button id="login-tab" class="tab-button active flex-1 py-4 font-semibold text-sm transition-all duration-300 focus:outline-none flex items-center justify-center gap-2" onclick="showTab('login')">
+              <button id="login-tab"
+                class="tab-button active flex-1 py-4 font-semibold text-sm transition-all duration-300 focus:outline-none flex items-center justify-center gap-2"
+                onclick="showTab('login')">
                 <i class="fas fa-sign-in-alt"></i>
                 <span>Sign In</span>
               </button>
-              <button id="register-tab" class="tab-button flex-1 py-4 font-semibold text-sm transition-all duration-300 focus:outline-none flex items-center justify-center gap-2" onclick="showTab('register')">
+              <button id="register-tab"
+                class="tab-button flex-1 py-4 font-semibold text-sm transition-all duration-300 focus:outline-none flex items-center justify-center gap-2"
+                onclick="showTab('register')">
                 <i class="fas fa-user-plus"></i>
                 <span>Create Account</span>
               </button>
             </div>
-            
+
             <!-- Forms Container -->
             <div class="relative">
-              
+
               <!-- Login Form -->
               <div id="login-container" class="w-full fade-enter">
                 <div class="mb-6">
                   <h2 class="text-2xl font-bold text-primary mb-2">Welcome Back</h2>
                   <p class="text-sm text-secondary">Enter your credentials to access your vault</p>
                 </div>
-                
+
                 <form method="POST" action="/" class="space-y-5">
                   <input type="hidden" name="form_type" value="login">
-                  
+
                   <div>
-                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Username or Email</label>
+                    <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Username or
+                      Email</label>
                     <div class="relative">
                       <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                         <i class="fas fa-user"></i>
                       </div>
-                      <input type="text" name="username" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="Enter your username or email" required autofocus>
+                      <input type="text" name="username"
+                        class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none"
+                        placeholder="Enter your username or email" required autofocus>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Password</label>
                     <div class="relative">
                       <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                         <i class="fas fa-lock"></i>
                       </div>
-                      <input type="password" name="password" id="login-pass" class="modern-input w-full rounded-xl pl-12 pr-12 py-3.5 text-sm outline-none" placeholder="Enter your password" required>
-                      <button type="button" id="login-eye" class="icon-wrapper absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none">
+                      <input type="password" name="password" id="login-pass"
+                        class="modern-input w-full rounded-xl pl-12 pr-12 py-3.5 text-sm outline-none"
+                        placeholder="Enter your password" required>
+                      <button type="button" id="login-eye"
+                        class="icon-wrapper absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none">
                         <i class="fas fa-eye"></i>
                       </button>
                     </div>
                   </div>
-                  
+
                   <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center cursor-pointer">
                       <input type="checkbox" class="w-4 h-4 rounded focus:ring-2 focus:ring-blue-500">
@@ -645,31 +703,38 @@
                     </label>
                     <a href="#" class="font-semibold">Forgot Password?</a>
                   </div>
-                  
-                  <button type="submit" class="btn-primary w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2">
+
+                  <button type="submit"
+                    class="btn-primary w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2">
                     <i class="fas fa-sign-in-alt"></i>
                     <span>Sign In</span>
                   </button>
                 </form>
-                
+
                 <!-- Divider -->
                 <div class="flex items-center gap-4 my-6">
                   <div class="flex-1 h-px" style="background-color: var(--border);"></div>
                   <span class="text-xs text-secondary font-medium">OR</span>
                   <div class="flex-1 h-px" style="background-color: var(--border);"></div>
                 </div>
-                
+
                 <!-- Google Sign-In Button -->
-                <a href="/auth/google" class="w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-3 border-2 hover:shadow-xl hover:-translate-y-1" style="background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary);">
+                <a href="/auth/google"
+                  class="w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-3 border-2 hover:shadow-xl hover:-translate-y-1"
+                  style="background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary);">
                   <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    <path fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
                   <span>Continue with Google</span>
                 </a>
-                
+
                 <div class="mt-6 text-center">
                   <p class="text-xs text-secondary flex items-center justify-center gap-2">
                     <i class="fas fa-shield-halved"></i>
@@ -677,45 +742,52 @@
                   </p>
                 </div>
               </div>
-              
+
               <!-- Register Form -->
               <div id="register-container" class="w-full hidden">
                 <div class="mb-6">
                   <h2 class="text-2xl font-bold text-primary mb-2">Create Account</h2>
                   <p class="text-sm text-secondary">Join thousands of users securing their data</p>
                 </div>
-                
+
                 <form method="POST" action="/" class="space-y-5">
                   <input type="hidden" name="form_type" value="register">
-                  
+
                   <div>
                     <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Username</label>
                     <div class="relative">
                       <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                         <i class="fas fa-user"></i>
                       </div>
-                      <input type="text" name="username" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="Choose a username" required>
+                      <input type="text" name="username"
+                        class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none"
+                        placeholder="Choose a username" required>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Email Address</label>
                     <div class="relative">
                       <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                         <i class="fas fa-envelope"></i>
                       </div>
-                      <input type="email" name="email" class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none" placeholder="your.email@example.com" required>
+                      <input type="email" name="email"
+                        class="modern-input w-full rounded-xl pl-12 pr-4 py-3.5 text-sm outline-none"
+                        placeholder="your.email@example.com" required>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label class="block text-xs font-semibold mb-2 ml-1 uppercase tracking-wide">Master Password</label>
                     <div class="relative">
                       <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                         <i class="fas fa-lock"></i>
                       </div>
-                      <input type="password" name="password" id="register-pass" class="modern-input w-full rounded-xl pl-12 pr-12 py-3.5 text-sm outline-none" placeholder="Create a strong password" required>
-                      <button type="button" id="register-eye" class="icon-wrapper absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none">
+                      <input type="password" name="password" id="register-pass"
+                        class="modern-input w-full rounded-xl pl-12 pr-12 py-3.5 text-sm outline-none"
+                        placeholder="Create a strong password" required>
+                      <button type="button" id="register-eye"
+                        class="icon-wrapper absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none">
                         <i class="fas fa-eye"></i>
                       </button>
                     </div>
@@ -729,7 +801,7 @@
                       <p class="text-xs text-secondary ml-1">Use 8+ characters with letters, numbers & symbols</p>
                     </div>
                   </div>
-                  
+
                   <div class="info-box border rounded-xl p-4">
                     <div class="flex items-start gap-3">
                       <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
@@ -743,48 +815,57 @@
                       </div>
                     </div>
                   </div>
-                  
-                  <button type="submit" class="btn-primary w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2">
+
+                  <button type="submit"
+                    class="btn-primary w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2">
                     <i class="fas fa-shield-halved"></i>
                     <span>Create Secure Account</span>
                   </button>
                 </form>
-                
+
                 <!-- Divider -->
                 <div class="flex items-center gap-4 my-6">
                   <div class="flex-1 h-px" style="background-color: var(--border);"></div>
                   <span class="text-xs text-secondary font-medium">OR</span>
                   <div class="flex-1 h-px" style="background-color: var(--border);"></div>
                 </div>
-                
+
                 <!-- Google Sign-In Button -->
-                <a href="/auth/google" class="w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-3 border-2 hover:shadow-xl hover:-translate-y-1" style="background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary);">
+                <a href="/auth/google"
+                  class="w-full rounded-xl font-semibold text-sm py-4 shadow-lg transform transition-all duration-300 flex items-center justify-center gap-3 border-2 hover:shadow-xl hover:-translate-y-1"
+                  style="background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary);">
                   <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    <path fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
                   <span>Continue with Google</span>
                 </a>
-                
+
                 <div class="mt-6 text-center">
                   <p class="text-xs text-secondary">
-                    By signing up, you agree to our <a href="#" class="font-semibold">Terms</a> & <a href="#" class="font-semibold">Privacy Policy</a>
+                    By signing up, you agree to our <a href="#" class="font-semibold">Terms</a> & <a href="#"
+                      class="font-semibold">Privacy Policy</a>
                   </p>
                 </div>
               </div>
-              
+
             </div>
-            
+
           </div>
-          
+
         </div>
-        
+
       </div>
     </div>
   </div>
-  
-  
+
+
 </body>
+
 </html>

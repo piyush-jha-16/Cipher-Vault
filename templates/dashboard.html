@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Dashboard - CipherVault</title>
@@ -7,16 +8,20 @@
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
   <link rel="alternate icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="/static/js/dashboardScript.js" defer></script>
+  <script src="/static/js/particles.js" defer></script>
   <link rel="stylesheet" href="/static/css/dashboardStyle.css">
+  <link rel="stylesheet" href="/static/css/enhancements.css">
 </head>
+
 <body data-theme="light">
-  
+
   <!-- Toast Container -->
   <div id="toastContainer" class="toast-container"></div>
-  
+
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,54 +30,60 @@
         <div class="flex items-center gap-3">
           <div>
             <h1 class="text-xl" style="font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em;">
-              <span style="color: var(--text-primary);">Cipher</span><span style="font-weight: 300; color: var(--accent);"> Vault</span>
+              <span style="color: var(--text-primary);">Cipher</span><span
+                style="font-weight: 300; color: var(--accent);"> Vault</span>
             </h1>
             <p class="text-xs text-secondary">Password Manager</p>
           </div>
         </div>
-        
+
         <!-- Search Bar -->
         <div class="flex-1 max-w-2xl mx-8 hidden md:block">
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 text-secondary">
               <i class="fas fa-search"></i>
             </div>
-            <input type="text" id="search-input" class="search-bar w-full rounded-xl pl-11 pr-4 py-2.5 text-sm outline-none" placeholder="Search passwords, notes, or websites...">
+            <input type="text" id="search-input"
+              class="search-bar w-full rounded-xl pl-11 pr-4 py-2.5 text-sm outline-none"
+              placeholder="Search passwords, notes, or websites...">
           </div>
         </div>
-        
+
         <!-- User Menu -->
         <div class="flex items-center gap-3">
           <!-- Theme Toggle -->
           <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
             <i class="fas fa-moon" id="theme-icon"></i>
           </button>
-          
+
           <!-- Settings Button -->
           <button class="theme-toggle" onclick="openSettingsModal()" aria-label="Settings">
             <i class="fas fa-cog"></i>
           </button>
-          
+
           <div class="flex items-center gap-3 pl-3 border-l" style="border-color: var(--border);">
             <div class="text-right hidden sm:block">
               <p id="displayName" class="text-sm font-semibold text-primary">{{ display_name }}</p>
             </div>
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg cursor-pointer" onclick="openSettingsModal()" title="Open Settings">
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg cursor-pointer"
+              onclick="openSettingsModal()" title="Open Settings">
               {{ display_name[0].upper() }}
             </div>
           </div>
-          
-          <a href="/logout" class="ml-2 p-2 text-secondary hover:text-red-500 transition-colors tooltip" data-tooltip="Logout">
+
+          <a href="/logout" class="ml-2 p-2 text-secondary hover:text-red-500 transition-colors tooltip"
+            data-tooltip="Logout">
             <i class="fas fa-sign-out-alt text-xl"></i>
           </a>
         </div>
       </div>
     </div>
   </nav>
-  
+
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <!-- Total Passwords -->
@@ -88,7 +99,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Weak Passwords -->
       <div class="card stat-card-2 text-white p-6 rounded-2xl">
         <div class="flex items-center justify-between">
@@ -102,9 +113,10 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Security Score -->
-      <div id="securityScoreCard" class="card text-white p-6 rounded-2xl transition-all" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+      <div id="securityScoreCard" class="card text-white p-6 rounded-2xl transition-all"
+        style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm opacity-90 font-medium">Security Score</p>
@@ -117,10 +129,10 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-      
+
       <!-- Passwords List -->
       <div class="lg:col-span-2">
         <div class="card p-6 rounded-2xl">
@@ -130,72 +142,88 @@
               <p class="text-sm text-secondary mt-1">Manage all your secure credentials</p>
             </div>
             <div class="flex gap-3">
-              <button onclick="openImportModal()" class="btn-secondary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2" style="background: var(--bg-primary); color: var(--text-primary); border: 2px solid var(--border);">
+              <button onclick="openImportModal()"
+                class="btn-secondary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2"
+                style="background: var(--bg-primary); color: var(--text-primary); border: 2px solid var(--border);">
                 <i class="fas fa-file-import"></i>
                 <span>Import</span>
               </button>
-              <button onclick="openDeleteAllModal()" class="btn-secondary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2" style="background: var(--bg-primary); color: #EF4444; border: 2px solid rgba(239, 68, 68, 0.3);">
+              <button onclick="openDeleteAllModal()"
+                class="btn-secondary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2"
+                style="background: var(--bg-primary); color: #EF4444; border: 2px solid rgba(239, 68, 68, 0.3);">
                 <i class="fas fa-trash-alt"></i>
                 <span>Delete All</span>
               </button>
-              <button onclick="openAddPasswordModal()" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2">
+              <button onclick="openAddPasswordModal()"
+                class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2">
                 <i class="fas fa-plus"></i>
                 <span>Add Password</span>
               </button>
             </div>
           </div>
-          
+
           <!-- Password Items -->
           <div id="password-list" class="space-y-3 overflow-y-auto" style="max-height: 500px;">
             {% if passwords %}
-              {% for password in passwords %}
-              <div class="card p-4 rounded-xl flex items-center justify-between group hover:shadow-lg transition-shadow" data-password-id="{{ password.id }}" data-website="{{ password.website }}" data-username="{{ password.username }}">
-                <div class="flex items-center gap-4 flex-1">
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
-                    <i class="fas fa-globe text-accent text-xl"></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2">
-                      <h4 class="font-semibold text-primary">{{ password.website }}</h4>
-                      {% if password.strength == 'weak' %}
-                      <span class="px-2 py-1 text-xs rounded-lg font-medium" style="background: rgba(239, 68, 68, 0.1); color: #EF4444;">
-                        <i class="fas fa-exclamation-triangle mr-1"></i>Weak
-                      </span>
-                      {% elif password.strength == 'medium' %}
-                      <span class="px-2 py-1 text-xs rounded-lg font-medium" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B;">
-                        <i class="fas fa-shield-alt mr-1"></i>Medium
-                      </span>
-                      {% else %}
-                      <span class="px-2 py-1 text-xs rounded-lg font-medium" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
-                        <i class="fas fa-shield-alt mr-1"></i>Strong
-                      </span>
-                      {% endif %}
-                    </div>
-                    <p class="text-sm text-secondary">{{ password.username }}</p>
-                  </div>
+            {% for password in passwords %}
+            <div class="card p-4 rounded-xl flex items-center justify-between group hover:shadow-lg transition-shadow"
+              data-password-id="{{ password.id }}" data-website="{{ password.website }}"
+              data-username="{{ password.username }}">
+              <div class="flex items-center gap-4 flex-1">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style="background: rgba(59, 130, 246, 0.1);">
+                  <i class="fas fa-globe text-accent text-xl"></i>
                 </div>
-                <div class="flex items-center gap-2">
-                  <button onclick="openViewPasswordModal({{ password.id }})" class="icon-wrapper p-2 transition-colors" title="View Password">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button onclick="openEditPasswordModal({{ password.id }})" class="icon-wrapper p-2 transition-colors text-blue-500" title="Edit">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button onclick="deletePassword({{ password.id }})" class="icon-wrapper p-2 transition-colors text-red-500" title="Delete">
-                    <i class="fas fa-trash"></i>
-                  </button>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-semibold text-primary">{{ password.website }}</h4>
+                    {% if password.strength == 'weak' %}
+                    <span class="px-2 py-1 text-xs rounded-lg font-medium"
+                      style="background: rgba(239, 68, 68, 0.1); color: #EF4444;">
+                      <i class="fas fa-exclamation-triangle mr-1"></i>Weak
+                    </span>
+                    {% elif password.strength == 'medium' %}
+                    <span class="px-2 py-1 text-xs rounded-lg font-medium"
+                      style="background: rgba(245, 158, 11, 0.1); color: #F59E0B;">
+                      <i class="fas fa-shield-alt mr-1"></i>Medium
+                    </span>
+                    {% else %}
+                    <span class="px-2 py-1 text-xs rounded-lg font-medium"
+                      style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                      <i class="fas fa-shield-alt mr-1"></i>Strong
+                    </span>
+                    {% endif %}
+                  </div>
+                  <p class="text-sm text-secondary">{{ password.username }}</p>
                 </div>
               </div>
-              {% endfor %}
+              <div class="flex items-center gap-2">
+                <button onclick="openViewPasswordModal({{ password.id }})" class="icon-wrapper p-2 transition-colors"
+                  title="View Password">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button onclick="openEditPasswordModal({{ password.id }})"
+                  class="icon-wrapper p-2 transition-colors text-blue-500" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deletePassword({{ password.id }})"
+                  class="icon-wrapper p-2 transition-colors text-red-500" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            {% endfor %}
             {% else %}
             <!-- Empty State -->
             <div class="text-center py-16 empty-state flex flex-col items-center justify-center">
-              <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+              <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center"
+                style="background: rgba(59, 130, 246, 0.1);">
                 <i class="fas fa-lock text-4xl" style="color: var(--accent);"></i>
               </div>
               <h3 class="text-xl font-semibold text-primary mb-2">No passwords yet</h3>
               <p class="text-sm text-secondary mb-6">Start securing your accounts by adding your first password</p>
-              <button onclick="openAddPasswordModal()" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg inline-flex items-center gap-2">
+              <button onclick="openAddPasswordModal()"
+                class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg inline-flex items-center gap-2">
                 <i class="fas fa-plus"></i>
                 <span>Add Your First Password</span>
               </button>
@@ -204,16 +232,18 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Sidebar -->
       <div class="lg:col-span-1 space-y-6">
-        
+
         <!-- Quick Actions -->
         <div class="card p-6 rounded-2xl">
           <h3 class="text-lg font-bold text-primary mb-4">Quick Actions</h3>
           <div class="space-y-3">
-            <button onclick="openGeneratePasswordModal()" class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-lg bg-blue-500 bg-opacity-10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+            <button onclick="openGeneratePasswordModal()"
+              class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
+              <div
+                class="w-10 h-10 rounded-lg bg-blue-500 bg-opacity-10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                 <i class="fas fa-random"></i>
               </div>
               <div>
@@ -221,9 +251,11 @@
                 <p class="text-xs text-secondary">Create strong password</p>
               </div>
             </button>
-            
-            <button onclick="openImportModal()" class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-lg bg-green-500 bg-opacity-10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+
+            <button onclick="openImportModal()"
+              class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
+              <div
+                class="w-10 h-10 rounded-lg bg-green-500 bg-opacity-10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
                 <i class="fas fa-file-import"></i>
               </div>
               <div>
@@ -231,9 +263,11 @@
                 <p class="text-xs text-secondary">From other services</p>
               </div>
             </button>
-            
-            <button onclick="openExportModal()" class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+
+            <button onclick="openExportModal()"
+              class="quick-action w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center gap-3 group">
+              <div
+                class="w-10 h-10 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
                 <i class="fas fa-file-export"></i>
               </div>
               <div>
@@ -243,61 +277,79 @@
             </button>
           </div>
         </div>
-        
+
         <!-- Developer Details -->
         <div class="card p-6 rounded-2xl">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+              style="background: rgba(59, 130, 246, 0.1);">
               <i class="fas fa-code text-accent text-lg"></i>
             </div>
             <h3 class="text-lg font-bold text-primary">Developer</h3>
           </div>
           <p class="text-sm text-secondary leading-relaxed mb-5">
-            Crafted with <span style="color: #E93C6A;">❤️</span> by <span class="font-semibold text-primary">Piyush Jha</span>
+            Crafted with <span style="color: #E93C6A;">❤️</span> by <span class="font-semibold text-primary">Piyush
+              Jha</span>
           </p>
           <div class="grid grid-cols-2 gap-3">
-            <a href="https://github.com/piyush-jha-16" target="_blank" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105" style="background: rgba(59, 130, 246, 0.1); color: var(--accent); border: 1px solid rgba(59, 130, 246, 0.3);" title="GitHub">
+            <a href="https://github.com/piyush-jha-16" target="_blank"
+              class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105"
+              style="background: rgba(59, 130, 246, 0.1); color: var(--accent); border: 1px solid rgba(59, 130, 246, 0.3);"
+              title="GitHub">
               <i class="fab fa-github text-xl"></i>
               <span class="text-sm">GitHub</span>
             </a>
-            <a href="https://instagram.com/_piyushjha16" target="_blank" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105" style="background: rgba(233, 60, 106, 0.1); color: #E93C6A; border: 1px solid rgba(233, 60, 106, 0.3);" title="Instagram">
+            <a href="https://instagram.com/_piyushjha16" target="_blank"
+              class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105"
+              style="background: rgba(233, 60, 106, 0.1); color: #E93C6A; border: 1px solid rgba(233, 60, 106, 0.3);"
+              title="Instagram">
               <i class="fab fa-instagram text-xl"></i>
               <span class="text-sm">Instagram</span>
             </a>
-            <a href="https://x.com/rzxpiyush16" target="_blank" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105" style="background: rgba(29, 161, 242, 0.1); color: #1DA1F2; border: 1px solid rgba(29, 161, 242, 0.3);" title="Twitter">
+            <a href="https://x.com/rzxpiyush16" target="_blank"
+              class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105"
+              style="background: rgba(29, 161, 242, 0.1); color: #1DA1F2; border: 1px solid rgba(29, 161, 242, 0.3);"
+              title="Twitter">
               <i class="fab fa-twitter text-xl"></i>
               <span class="text-sm">Twitter</span>
             </a>
-            <a href="https://piyushjhapf.netlify.app/" target="_blank" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105" style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3);" title="Portfolio">
+            <a href="https://piyushjhapf.netlify.app/" target="_blank"
+              class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:scale-105"
+              style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3);"
+              title="Portfolio">
               <i class="fas fa-globe text-xl"></i>
               <span class="text-sm">Portfolio</span>
             </a>
           </div>
         </div>
-        
+
       </div>
-      
+
     </div>
-    
+
     <!-- Footer -->
     <footer class="mt-12 py-6 border-t" style="border-color: var(--border);">
       <div class="max-w-7xl mx-auto px-6">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="text-center md:text-left">
             <p class="text-sm" style="color: var(--text-secondary);">
-              © 2025 <span class="font-semibold" style="color: var(--text-primary);">Cipher Vault</span>. All rights reserved.
+              © 2025 <span class="font-semibold" style="color: var(--text-primary);">Cipher Vault</span>. All rights
+              reserved.
             </p>
           </div>
           <div class="flex items-center gap-6">
-            <a href="#" class="text-sm transition-colors hover:text-accent" style="color: var(--text-secondary);">Privacy Policy</a>
-            <a href="#" class="text-sm transition-colors hover:text-accent" style="color: var(--text-secondary);">Terms of Service</a>
-            <a href="#" class="text-sm transition-colors hover:text-accent" style="color: var(--text-secondary);">Support</a>
+            <a href="#" class="text-sm transition-colors hover:text-accent"
+              style="color: var(--text-secondary);">Privacy Policy</a>
+            <a href="#" class="text-sm transition-colors hover:text-accent" style="color: var(--text-secondary);">Terms
+              of Service</a>
+            <a href="#" class="text-sm transition-colors hover:text-accent"
+              style="color: var(--text-secondary);">Support</a>
           </div>
         </div>
       </div>
     </footer>
   </div>
-  
+
   <!-- Import Passwords Modal -->
   <div id="importModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
     <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
@@ -307,16 +359,18 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
+
       <div class="space-y-4">
         <!-- Info Box -->
-        <div class="p-4 rounded-xl" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+        <div class="p-4 rounded-xl"
+          style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
           <div class="flex items-start gap-3">
             <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
             <div class="text-sm" style="color: var(--text-primary);">
               <p class="font-semibold mb-2">How to export from Google Password Manager:</p>
               <ol class="space-y-1 text-xs" style="color: var(--text-secondary);">
-                <li>1. Go to <a href="https://passwords.google.com" target="_blank" class="text-blue-500 hover:underline">passwords.google.com</a></li>
+                <li>1. Go to <a href="https://passwords.google.com" target="_blank"
+                    class="text-blue-500 hover:underline">passwords.google.com</a></li>
                 <li>2. Click Settings (gear icon)</li>
                 <li>3. Click "Export passwords"</li>
                 <li>4. Download the CSV file</li>
@@ -325,27 +379,32 @@
             </div>
           </div>
         </div>
-        
+
         <!-- File Upload -->
         <form id="importForm" enctype="multipart/form-data" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">CSV File</label>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+              style="color: var(--text-secondary);">CSV File</label>
             <div class="relative">
-              <input type="file" id="importFile" accept=".csv" class="modern-input w-full rounded-xl px-4 py-3 text-sm outline-none" required>
+              <input type="file" id="importFile" accept=".csv"
+                class="modern-input w-full rounded-xl px-4 py-3 text-sm outline-none" required>
             </div>
           </div>
-          
+
           <div>
-            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Your Account Password</label>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+              style="color: var(--text-secondary);">Your Account Password</label>
             <div class="relative">
               <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                 <i class="fas fa-lock"></i>
               </div>
-              <input type="password" id="importAccountPassword" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Enter your account password" required>
+              <input type="password" id="importAccountPassword"
+                class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+                placeholder="Enter your account password" required>
             </div>
             <p class="text-xs mt-2" style="color: var(--text-secondary);">Required to encrypt imported passwords</p>
           </div>
-          
+
           <div id="importProgress" class="hidden">
             <div class="flex items-center gap-3 p-3 rounded-xl" style="background: rgba(59, 130, 246, 0.1);">
               <div class="animate-spin">
@@ -354,9 +413,11 @@
               <span class="text-sm font-medium" style="color: var(--text-primary);">Importing passwords...</span>
             </div>
           </div>
-          
+
           <div class="flex gap-3 pt-4">
-            <button type="button" onclick="closeImportModal()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all" style="background: var(--bg-primary); color: var(--text-primary); border: 2px solid var(--border);">
+            <button type="button" onclick="closeImportModal()"
+              class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all"
+              style="background: var(--bg-primary); color: var(--text-primary); border: 2px solid var(--border);">
               Cancel
             </button>
             <button type="submit" class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
@@ -367,7 +428,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Confirm Password Modal (for delete operations) -->
   <div id="confirmPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
     <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
@@ -377,25 +438,30 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
+
       <p class="text-sm text-secondary mb-6">Please enter your account password to confirm this action.</p>
-      
+
       <form id="confirmPasswordForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Account Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Account Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-lock"></i>
             </div>
-            <input type="password" id="confirmAccountPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter your password" required>
-            <button type="button" onclick="toggleConfirmPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
+            <input type="password" id="confirmAccountPassword"
+              class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none"
+              placeholder="Enter your password" required>
+            <button type="button" onclick="toggleConfirmPassword()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
               <i id="confirmPasswordToggleIcon" class="fas fa-eye"></i>
             </button>
           </div>
         </div>
-        
+
         <div class="flex gap-3 pt-2">
-          <button type="button" onclick="closeConfirmPasswordModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
+          <button type="button" onclick="closeConfirmPasswordModal()"
+            class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
             Cancel
           </button>
           <button type="submit" class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
@@ -405,7 +471,7 @@
       </form>
     </div>
   </div>
-  
+
   <!-- Delete All Passwords Modal -->
   <div id="deleteAllModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
     <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
@@ -415,43 +481,51 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
-      <div class="mb-6 p-4 rounded-xl" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
+
+      <div class="mb-6 p-4 rounded-xl"
+        style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
         <div class="flex items-start gap-3">
           <i class="fas fa-exclamation-triangle text-2xl" style="color: #EF4444;"></i>
           <div>
             <p class="font-semibold mb-1" style="color: #EF4444;">Warning: This action cannot be undone!</p>
-            <p class="text-sm text-secondary">All {{ total_passwords }} passwords in your vault will be permanently deleted.</p>
+            <p class="text-sm text-secondary">All {{ total_passwords }} passwords in your vault will be permanently
+              deleted.</p>
           </div>
         </div>
       </div>
-      
+
       <form id="deleteAllForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Account Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Account Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-lock"></i>
             </div>
-            <input type="password" id="deleteAllPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter your password to confirm" required>
-            <button type="button" onclick="toggleDeleteAllPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
+            <input type="password" id="deleteAllPassword"
+              class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none"
+              placeholder="Enter your password to confirm" required>
+            <button type="button" onclick="toggleDeleteAllPassword()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
               <i id="deleteAllPasswordToggleIcon" class="fas fa-eye"></i>
             </button>
           </div>
         </div>
-        
+
         <div class="flex gap-3 pt-2">
-          <button type="button" onclick="closeDeleteAllModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
+          <button type="button" onclick="closeDeleteAllModal()"
+            class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
             Cancel
           </button>
-          <button type="submit" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+          <button type="submit" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white"
+            style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
             Delete All
           </button>
         </div>
       </form>
     </div>
   </div>
-  
+
   <!-- Export Passwords Modal -->
   <div id="exportModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
     <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
@@ -464,8 +538,9 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
-      <div class="mb-6 p-4 rounded-xl" style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
+
+      <div class="mb-6 p-4 rounded-xl"
+        style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
         <div class="flex items-start gap-3">
           <i class="fas fa-info-circle text-2xl" style="color: #8B5CF6;"></i>
           <div>
@@ -474,26 +549,32 @@
           </div>
         </div>
       </div>
-      
+
       <form id="exportForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Account Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Account Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-lock"></i>
             </div>
-            <input type="password" id="exportPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter your password to export" required>
-            <button type="button" onclick="toggleExportPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
+            <input type="password" id="exportPassword"
+              class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none"
+              placeholder="Enter your password to export" required>
+            <button type="button" onclick="toggleExportPassword()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper transition-colors">
               <i id="exportPasswordToggleIcon" class="fas fa-eye"></i>
             </button>
           </div>
         </div>
-        
+
         <div class="flex gap-3 pt-2">
-          <button type="button" onclick="closeExportModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
+          <button type="button" onclick="closeExportModal()"
+            class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm">
             Cancel
           </button>
-          <button type="submit" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white" style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);">
+          <button type="submit" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white"
+            style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);">
             <i class="fas fa-download mr-2"></i>
             Export CSV
           </button>
@@ -511,35 +592,42 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
+
       <form id="addPasswordForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Website/Service</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Website/Service</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-globe"></i>
             </div>
-            <input type="text" id="website" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="e.g., facebook.com" required>
+            <input type="text" id="website" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              placeholder="e.g., facebook.com" required>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Username/Email</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Username/Email</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-user"></i>
             </div>
-            <input type="text" id="username" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Your username or email" required>
+            <input type="text" id="username" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              placeholder="Your username or email" required>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-lock"></i>
             </div>
-            <input type="password" id="password" class="modern-input w-full rounded-xl pl-11 pr-20 py-3 text-sm outline-none" placeholder="Enter password" required>
+            <input type="password" id="password"
+              class="modern-input w-full rounded-xl pl-11 pr-20 py-3 text-sm outline-none" placeholder="Enter password"
+              required>
             <div class="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
               <button type="button" onclick="togglePasswordVisibility()" class="icon-wrapper transition-colors">
                 <i class="fas fa-eye"></i>
@@ -550,12 +638,14 @@
             </div>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Notes (Optional)</label>
-          <textarea id="notes" rows="3" class="modern-input w-full rounded-xl px-4 py-3 text-sm outline-none" placeholder="Add any additional notes..."></textarea>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Notes (Optional)</label>
+          <textarea id="notes" rows="3" class="modern-input w-full rounded-xl px-4 py-3 text-sm outline-none"
+            placeholder="Add any additional notes..."></textarea>
         </div>
-        
+
         <div class="info-box p-4 rounded-xl">
           <div class="flex items-start gap-3">
             <i class="fas fa-shield-alt text-accent mt-1"></i>
@@ -565,19 +655,23 @@
             </div>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Your Account Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Your Account Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-shield-alt"></i>
             </div>
-            <input type="password" id="accountPassword" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Enter your account password" required>
+            <input type="password" id="accountPassword"
+              class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              placeholder="Enter your account password" required>
           </div>
         </div>
-        
+
         <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeAddPasswordModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all">
+          <button type="button" onclick="closeAddPasswordModal()"
+            class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all">
             Cancel
           </button>
           <button type="submit" class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
@@ -588,7 +682,7 @@
       </form>
     </div>
   </div>
-  
+
   <!-- Edit Password Modal -->
   <div id="editPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
     <div class="modal rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
@@ -598,37 +692,46 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
+
       <form id="editPasswordForm" class="space-y-4">
         <input type="hidden" id="editPasswordId">
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Website/Service</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Website/Service</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-globe"></i>
             </div>
-            <input type="text" id="editWebsite" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="e.g., facebook.com" required>
+            <input type="text" id="editWebsite"
+              class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              placeholder="e.g., facebook.com" required>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Username/Email</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Username/Email</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-user"></i>
             </div>
-            <input type="text" id="editUsername" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Your username or email" required>
+            <input type="text" id="editUsername"
+              class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              placeholder="Your username or email" required>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-lock"></i>
             </div>
-            <input type="password" id="editPassword" class="modern-input w-full rounded-xl pl-11 pr-20 py-3 text-sm outline-none" placeholder="Enter password" required>
+            <input type="password" id="editPassword"
+              class="modern-input w-full rounded-xl pl-11 pr-20 py-3 text-sm outline-none" placeholder="Enter password"
+              required>
             <div class="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
               <button type="button" onclick="toggleEditPasswordVisibility()" class="icon-wrapper transition-colors">
                 <i class="fas fa-eye"></i>
@@ -639,7 +742,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="info-box p-4 rounded-xl">
           <div class="flex items-start gap-3">
             <i class="fas fa-shield-alt text-accent mt-1"></i>
@@ -649,19 +752,24 @@
             </div>
           </div>
         </div>
-        
+
         <div>
-          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Your Account Password</label>
+          <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+            style="color: var(--text-secondary);">Your Account Password</label>
           <div class="relative">
             <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
               <i class="fas fa-shield-alt"></i>
             </div>
-            <input type="password" id="editAccountPassword" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Enter your account password" required>
+            <input type="password" id="editAccountPassword"
+              class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              placeholder="Enter your account password" required>
           </div>
         </div>
-        
+
         <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeEditPasswordModal()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-colors" style="background: var(--card); color: var(--text-secondary); border: 1px solid var(--border);">
+          <button type="button" onclick="closeEditPasswordModal()"
+            class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-colors"
+            style="background: var(--card); color: var(--text-secondary); border: 1px solid var(--border);">
             Cancel
           </button>
           <button type="submit" class="flex-1 btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
@@ -671,13 +779,14 @@
       </form>
     </div>
   </div>
-  
+
   <!-- Generate Password Modal -->
   <div id="generatePasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
     <div class="modal rounded-3xl shadow-2xl max-w-lg w-full mx-4 p-8" style="background: var(--bg-secondary);">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+            style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
             <i class="fas fa-key text-white"></i>
           </div>
           <h3 class="text-2xl font-bold text-primary">Password Generator</h3>
@@ -686,47 +795,59 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
+
       <div class="space-y-6">
         <!-- Generated Password Display -->
         <div class="relative">
-          <div class="p-5 rounded-2xl border-2 transition-all" style="background: var(--bg-primary); border-color: var(--border);">
+          <div class="p-5 rounded-2xl border-2 transition-all"
+            style="background: var(--bg-primary); border-color: var(--border);">
             <div class="flex items-center gap-3">
               <div class="flex-1 overflow-hidden">
-                <label class="text-xs font-semibold text-secondary uppercase tracking-wide mb-2 block">Generated Password</label>
-                <code id="generatedPassword" class="text-xl font-mono text-primary font-bold break-all block">Cy$9mK#nQ2pL</code>
+                <label class="text-xs font-semibold text-secondary uppercase tracking-wide mb-2 block">Generated
+                  Password</label>
+                <code id="generatedPassword"
+                  class="text-xl font-mono text-primary font-bold break-all block">Cy$9mK#nQ2pL</code>
               </div>
               <div class="flex flex-col gap-2">
-                <button onclick="regeneratePassword()" class="w-12 h-12 rounded-xl text-white hover:shadow-lg transition-all flex items-center justify-center" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);" title="Generate New">
+                <button onclick="regeneratePassword()"
+                  class="w-12 h-12 rounded-xl text-white hover:shadow-lg transition-all flex items-center justify-center"
+                  style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);" title="Generate New">
                   <i class="fas fa-sync-alt"></i>
                 </button>
-                <button onclick="copyGeneratedPassword()" class="w-12 h-12 rounded-xl transition-all flex items-center justify-center hover:shadow-lg" style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white;" title="Copy">
+                <button onclick="copyGeneratedPassword()"
+                  class="w-12 h-12 rounded-xl transition-all flex items-center justify-center hover:shadow-lg"
+                  style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white;" title="Copy">
                   <i class="fas fa-copy"></i>
                 </button>
               </div>
             </div>
           </div>
         </div>
-        
+
         <!-- Length Slider -->
         <div class="p-4 rounded-xl" style="background: var(--bg-primary);">
           <div class="flex items-center justify-between mb-3">
             <label class="text-sm font-semibold text-primary">Password Length</label>
             <div class="flex items-center gap-2">
-              <span id="lengthValue" class="text-2xl font-bold" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">16</span>
+              <span id="lengthValue" class="text-2xl font-bold"
+                style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">16</span>
               <span class="text-sm text-secondary">characters</span>
             </div>
           </div>
-          <input type="range" id="passwordLength" min="8" max="32" value="16" class="w-full h-2 rounded-full appearance-none cursor-pointer" style="background: linear-gradient(to right, #6366F1 0%, #6366F1 50%, var(--border) 50%, var(--border) 100%);">
+          <input type="range" id="passwordLength" min="8" max="32" value="16"
+            class="w-full h-2 rounded-full appearance-none cursor-pointer"
+            style="background: linear-gradient(to right, #6366F1 0%, #6366F1 50%, var(--border) 50%, var(--border) 100%);">
         </div>
-        
+
         <!-- Character Options -->
         <div class="space-y-2">
           <label class="text-sm font-semibold text-primary block mb-3">Include Characters</label>
-          
-          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md" style="background: var(--bg-primary); border: 2px solid var(--border);">
+
+          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md"
+            style="background: var(--bg-primary); border: 2px solid var(--border);">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(99, 102, 241, 0.1);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                style="background: rgba(99, 102, 241, 0.1);">
                 <span class="text-lg font-bold" style="color: #6366F1;">Aa</span>
               </div>
               <div>
@@ -736,10 +857,12 @@
             </div>
             <input type="checkbox" id="includeLetters" checked class="w-5 h-5 rounded" style="accent-color: #6366F1;">
           </label>
-          
-          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md" style="background: var(--bg-primary); border: 2px solid var(--border);">
+
+          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md"
+            style="background: var(--bg-primary); border: 2px solid var(--border);">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                style="background: rgba(59, 130, 246, 0.1);">
                 <span class="text-lg font-bold" style="color: #3B82F6;">123</span>
               </div>
               <div>
@@ -749,10 +872,12 @@
             </div>
             <input type="checkbox" id="includeNumbers" checked class="w-5 h-5 rounded" style="accent-color: #3B82F6;">
           </label>
-          
-          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md" style="background: var(--bg-primary); border: 2px solid var(--border);">
+
+          <label class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all hover:shadow-md"
+            style="background: var(--bg-primary); border: 2px solid var(--border);">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(139, 92, 246, 0.1);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                style="background: rgba(139, 92, 246, 0.1);">
                 <span class="text-lg font-bold" style="color: #8B5CF6;">@#$</span>
               </div>
               <div>
@@ -763,24 +888,29 @@
             <input type="checkbox" id="includeSymbols" checked class="w-5 h-5 rounded" style="accent-color: #8B5CF6;">
           </label>
         </div>
-        
+
         <!-- Info Box -->
         <div class="info-box p-4 rounded-xl">
           <div class="flex items-start gap-3">
             <i class="fas fa-lightbulb text-lg mt-0.5" style="color: #F59E0B;"></i>
             <div>
               <p class="text-xs font-semibold text-primary mb-1">Pro Tip</p>
-              <p class="text-xs text-secondary">For maximum security, use at least 16 characters with all character types enabled.</p>
+              <p class="text-xs text-secondary">For maximum security, use at least 16 characters with all character
+                types enabled.</p>
             </div>
           </div>
         </div>
-        
+
         <!-- Action Buttons -->
         <div class="flex gap-3">
-          <button onclick="closeGeneratePasswordModal()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border);">
+          <button onclick="closeGeneratePasswordModal()"
+            class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all"
+            style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border);">
             Cancel
           </button>
-          <button onclick="useGeneratedPassword()" class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white transition-all hover:shadow-xl" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
+          <button onclick="useGeneratedPassword()"
+            class="flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg text-white transition-all hover:shadow-xl"
+            style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
             <i class="fas fa-check mr-2"></i>
             Use Password
           </button>
@@ -788,11 +918,11 @@
       </div>
     </div>
   </div>
-  
+
   <!-- View Password Modal -->
   <div id="viewPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center success-modal-backdrop">
     <div class="success-modal rounded-2xl shadow-2xl max-w-2xl w-full mx-4 p-8">
-      
+
       <div id="viewPasswordContent">
         <!-- Authentication Form -->
         <div id="authSection">
@@ -802,42 +932,49 @@
               <i class="fas fa-times text-xl"></i>
             </button>
           </div>
-          
+
           <div class="info-box p-4 rounded-xl mb-6">
             <div class="flex items-start gap-3">
               <i class="fas fa-shield-alt text-accent text-xl mt-1"></i>
               <div>
                 <p class="text-sm font-semibold text-primary mb-1">Security Verification Required</p>
-                <p class="text-xs text-secondary">For your security, please enter your account password to decrypt and view this password.</p>
+                <p class="text-xs text-secondary">For your security, please enter your account password to decrypt and
+                  view this password.</p>
               </div>
             </div>
           </div>
-          
+
           <input type="hidden" id="viewPasswordId">
           <input type="hidden" id="viewPasswordWebsite">
           <input type="hidden" id="viewPasswordUsername">
-          
+
           <div class="mb-6">
-            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Your Account Password</label>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+              style="color: var(--text-secondary);">Your Account Password</label>
             <div class="relative">
               <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                 <i class="fas fa-shield-alt"></i>
               </div>
-              <input type="password" id="viewAccountPassword" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Enter your account password" onkeypress="if(event.key==='Enter') authenticateAndViewPassword()">
+              <input type="password" id="viewAccountPassword"
+                class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+                placeholder="Enter your account password"
+                onkeypress="if(event.key==='Enter') authenticateAndViewPassword()">
             </div>
           </div>
-          
+
           <div class="flex gap-3">
-            <button onclick="closeViewPasswordModal()" class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all">
+            <button onclick="closeViewPasswordModal()"
+              class="btn-secondary flex-1 px-6 py-3 rounded-xl font-semibold text-sm transition-all">
               Cancel
             </button>
-            <button onclick="authenticateAndViewPassword()" class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
+            <button onclick="authenticateAndViewPassword()"
+              class="btn-primary flex-1 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
               <i class="fas fa-unlock mr-2"></i>
               Decrypt & View
             </button>
           </div>
         </div>
-        
+
         <!-- Password Display (shown after authentication) -->
         <div id="passwordDisplaySection" class="hidden">
           <div class="text-center mb-6">
@@ -847,35 +984,39 @@
             <h3 class="text-3xl font-bold text-primary mb-2">Password Decrypted! 🔓</h3>
             <p class="text-sm text-secondary">Your password has been successfully decrypted.</p>
           </div>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <!-- Website/Service -->
             <div class="card p-4 rounded-xl">
               <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style="background: rgba(59, 130, 246, 0.1);">
                   <i class="fas fa-globe text-accent"></i>
                 </div>
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Website/Service</p>
+                  <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">
+                    Website/Service</p>
                   <p id="displayWebsite" class="text-sm font-bold text-primary"></p>
                 </div>
               </div>
             </div>
-            
+
             <!-- Username -->
             <div class="card p-4 rounded-xl">
               <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(16, 185, 129, 0.1);">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style="background: rgba(16, 185, 129, 0.1);">
                   <i class="fas fa-user text-success"></i>
                 </div>
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Username</p>
+                  <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">
+                    Username</p>
                   <p id="displayUsername" class="text-sm font-bold text-primary break-all"></p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <!-- Decrypted Password Display -->
           <div class="mb-6">
             <div class="flex items-center justify-between mb-3">
@@ -883,36 +1024,42 @@
                 <i class="fas fa-key text-accent"></i>
                 <h4 class="text-sm font-bold text-primary">Decrypted Password</h4>
               </div>
-              <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+              <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
                 <i class="fas fa-unlock mr-1"></i>Decrypted
               </span>
             </div>
-            
+
             <div class="card p-5 rounded-xl" style="background: var(--bg-primary);">
               <div class="flex items-center justify-between gap-3">
                 <code id="decryptedPassword" class="text-xl font-mono text-primary flex-1 break-all font-bold"></code>
-                <button onclick="copyDecryptedPassword()" class="icon-wrapper p-3 transition-all hover:scale-110" title="Copy to Clipboard" style="background: var(--accent); color: white; border-radius: 10px;">
+                <button onclick="copyDecryptedPassword()" class="icon-wrapper p-3 transition-all hover:scale-110"
+                  title="Copy to Clipboard" style="background: var(--accent); color: white; border-radius: 10px;">
                   <i class="fas fa-copy text-lg"></i>
                 </button>
               </div>
             </div>
           </div>
-          
+
           <!-- Security Tip -->
-          <div class="mb-6 p-4 rounded-xl" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
+          <div class="mb-6 p-4 rounded-xl"
+            style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
             <div class="flex items-start gap-3">
               <i class="fas fa-lightbulb text-warning text-xl mt-0.5"></i>
               <div>
                 <p class="text-xs font-semibold text-primary mb-2">💡 Security Tip</p>
                 <p class="text-xs text-secondary leading-relaxed">
-                  Make sure no one is watching your screen while viewing passwords. For maximum security, consider changing passwords regularly 
-                  and never use the same password across multiple accounts. This password will be hidden when you close this window.
+                  Make sure no one is watching your screen while viewing passwords. For maximum security, consider
+                  changing passwords regularly
+                  and never use the same password across multiple accounts. This password will be hidden when you close
+                  this window.
                 </p>
               </div>
             </div>
           </div>
-          
-          <button onclick="closeViewPasswordModal()" class="w-full btn-primary px-6 py-4 rounded-xl font-semibold text-base shadow-lg">
+
+          <button onclick="closeViewPasswordModal()"
+            class="w-full btn-primary px-6 py-4 rounded-xl font-semibold text-base shadow-lg">
             <i class="fas fa-check mr-2"></i>
             Done
           </button>
@@ -920,13 +1067,14 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Settings Modal -->
   <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center success-modal-backdrop">
     <div class="success-modal rounded-2xl shadow-2xl max-w-2xl w-full mx-4 p-8">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+            style="background: rgba(59, 130, 246, 0.1);">
             <i class="fas fa-cog text-accent text-2xl"></i>
           </div>
           <div>
@@ -938,180 +1086,207 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      
+
       <!-- Settings Sections -->
       <div class="space-y-6">
-        
+
         <!-- Profile Section -->
         <div class="card p-6 rounded-xl">
           <div class="flex items-center gap-3 mb-4">
             <i class="fas fa-user-circle text-accent text-xl"></i>
             <h4 class="text-lg font-bold text-primary">Profile Information</h4>
           </div>
-          
+
           <!-- Display Name -->
           <div class="mb-4">
-            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Display Name</label>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+              style="color: var(--text-secondary);">Display Name</label>
             <div class="relative">
               <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                 <i class="fas fa-user"></i>
               </div>
-              <input type="text" id="settingsDisplayName" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none" placeholder="Your display name" value="{{ display_name }}">
+              <input type="text" id="settingsDisplayName"
+                class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+                placeholder="Your display name" value="{{ display_name }}">
             </div>
             <p class="text-xs text-secondary mt-2">This name will be displayed throughout the application.</p>
           </div>
-          
+
           <!-- Username (Read-only) -->
           <div class="mb-4">
-            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Username (Login ID)</label>
+            <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+              style="color: var(--text-secondary);">Username (Login ID)</label>
             <div class="relative">
               <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                 <i class="fas fa-at"></i>
               </div>
-              <input type="text" class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none opacity-60 cursor-not-allowed" value="{{ username }}" readonly disabled>
+              <input type="text"
+                class="modern-input w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none opacity-60 cursor-not-allowed"
+                value="{{ username }}" readonly disabled>
             </div>
             <p class="text-xs text-secondary mt-2">
               <i class="fas fa-lock text-xs mr-1"></i>
               Username is your login ID and cannot be changed.
             </p>
           </div>
-          
-          <button onclick="updateDisplayName()" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
+
+          <button onclick="updateDisplayName()"
+            class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
             <i class="fas fa-save mr-2"></i>
             Save Display Name
           </button>
         </div>
-        
+
         <!-- Security Section -->
         <div class="card p-6 rounded-xl">
           <div class="flex items-center gap-3 mb-4">
             <i class="fas fa-shield-alt text-accent text-xl"></i>
             <h4 class="text-lg font-bold text-primary">Security Settings</h4>
           </div>
-          
+
           <form id="changePasswordForm" class="space-y-4">
             <!-- Current Password -->
             <div>
-              <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Current Password</label>
+              <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+                style="color: var(--text-secondary);">Current Password</label>
               <div class="relative">
                 <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                   <i class="fas fa-lock"></i>
                 </div>
-                <input type="password" id="currentPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter current password" required>
-                <button type="button" onclick="togglePasswordVisibility('currentPassword')" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                <input type="password" id="currentPassword"
+                  class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none"
+                  placeholder="Enter current password" required>
+                <button type="button" onclick="togglePasswordVisibility('currentPassword')"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
             </div>
-            
+
             <!-- New Password -->
             <div>
-              <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">New Password</label>
+              <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+                style="color: var(--text-secondary);">New Password</label>
               <div class="relative">
                 <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                   <i class="fas fa-key"></i>
                 </div>
-                <input type="password" id="newPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Enter new password" required>
-                <button type="button" onclick="togglePasswordVisibility('newPassword')" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                <input type="password" id="newPassword"
+                  class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none"
+                  placeholder="Enter new password" required>
+                <button type="button" onclick="togglePasswordVisibility('newPassword')"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
             </div>
-            
+
             <!-- Confirm New Password -->
             <div>
-              <label class="block text-xs font-semibold mb-2 uppercase tracking-wide" style="color: var(--text-secondary);">Confirm New Password</label>
+              <label class="block text-xs font-semibold mb-2 uppercase tracking-wide"
+                style="color: var(--text-secondary);">Confirm New Password</label>
               <div class="relative">
                 <div class="absolute left-4 top-1/2 -translate-y-1/2 icon-wrapper">
                   <i class="fas fa-key"></i>
                 </div>
-                <input type="password" id="confirmPassword" class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none" placeholder="Confirm new password" required>
-                <button type="button" onclick="togglePasswordVisibility('confirmPassword')" class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper">
+                <input type="password" id="confirmPassword"
+                  class="modern-input w-full rounded-xl pl-11 pr-12 py-3 text-sm outline-none"
+                  placeholder="Confirm new password" required>
+                <button type="button" onclick="togglePasswordVisibility('confirmPassword')"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 icon-wrapper">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
             </div>
-            
+
             <div class="info-box p-3 rounded-lg">
               <div class="flex items-start gap-2">
                 <i class="fas fa-info-circle text-accent text-sm mt-0.5"></i>
                 <p class="text-xs text-secondary leading-relaxed">
-                  <strong>Important:</strong> Changing your password will require re-encrypting all stored passwords. 
+                  <strong>Important:</strong> Changing your password will require re-encrypting all stored passwords.
                   You'll need to enter your current password to proceed.
                 </p>
               </div>
             </div>
-            
+
             <button type="submit" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm shadow-lg">
               <i class="fas fa-shield-alt mr-2"></i>
               Change Password
             </button>
           </form>
         </div>
-        
+
         <!-- Danger Zone -->
-        <div class="card p-6 rounded-xl" style="border: 2px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);">
+        <div class="card p-6 rounded-xl"
+          style="border: 2px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);">
           <div class="flex items-center gap-3 mb-4">
             <i class="fas fa-exclamation-triangle text-danger text-xl"></i>
             <h4 class="text-lg font-bold text-danger">Danger Zone</h4>
           </div>
-          
+
           <p class="text-sm text-secondary mb-4">
             Once you logout, you'll need to sign in again to access your passwords.
           </p>
-          
-          <a href="/logout" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg transition-all" style="background: #EF4444; color: white;" onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'">
+
+          <a href="/logout"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm shadow-lg transition-all"
+            style="background: #EF4444; color: white;" onmouseover="this.style.background='#DC2626'"
+            onmouseout="this.style.background='#EF4444'">
             <i class="fas fa-sign-out-alt"></i>
             Logout from Account
           </a>
         </div>
-        
+
       </div>
     </div>
   </div>
-  
+
   <!-- Success Modal - Password Saved -->
   <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center success-modal-backdrop">
     <div class="success-modal rounded-2xl shadow-2xl max-w-2xl w-full mx-4 p-8">
       <div class="text-center mb-6">
         <div class="success-icon-wrapper">
           <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
           </svg>
         </div>
         <h3 class="text-3xl font-bold text-primary mb-2">Password Saved Successfully! 🎉</h3>
         <p class="text-sm text-secondary">Your password has been encrypted and stored securely.</p>
       </div>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <!-- Website/Service -->
         <div class="card p-4 rounded-xl">
           <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(59, 130, 246, 0.1);">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+              style="background: rgba(59, 130, 246, 0.1);">
               <i class="fas fa-globe text-accent"></i>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Website/Service</p>
+              <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">
+                Website/Service</p>
               <p id="successWebsite" class="text-sm font-bold text-primary"></p>
             </div>
           </div>
         </div>
-        
+
         <!-- Username -->
         <div class="card p-4 rounded-xl">
           <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(16, 185, 129, 0.1);">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+              style="background: rgba(16, 185, 129, 0.1);">
               <i class="fas fa-user text-success"></i>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Username</p>
+              <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Username
+              </p>
               <p id="successUsername" class="text-sm font-bold text-primary break-all"></p>
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- Encrypted Password Display -->
       <div class="mb-6">
         <div class="flex items-center justify-between mb-3">
@@ -1119,29 +1294,31 @@
             <i class="fas fa-lock text-accent"></i>
             <h4 class="text-sm font-bold text-primary">Encrypted Password</h4>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold"
+            style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
             <i class="fas fa-shield-alt mr-1"></i>AES-256 Encrypted
           </span>
         </div>
-        
+
         <div class="encrypted-password-box">
           <code id="successEncryptedPassword" class="text-xs text-secondary leading-relaxed"></code>
         </div>
-        
+
         <div class="mt-3 info-box p-3 rounded-lg">
           <div class="flex items-start gap-2">
             <i class="fas fa-info-circle text-accent text-sm mt-0.5"></i>
             <div>
               <p class="text-xs font-semibold text-primary mb-1">Security Note</p>
               <p class="text-xs text-secondary leading-relaxed">
-                This is the encrypted version of your password stored in our database. It cannot be decrypted without your account password. 
+                This is the encrypted version of your password stored in our database. It cannot be decrypted without
+                your account password.
                 Your original password is never stored in plain text.
               </p>
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- Password Strength Indicator -->
       <div class="mb-6 card p-4 rounded-xl">
         <div class="flex items-center justify-between">
@@ -1150,21 +1327,24 @@
               <i class="fas fa-shield-alt text-xl"></i>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Password Strength</p>
+              <p class="text-xs font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">Password
+                Strength</p>
               <p id="successStrength" class="text-sm font-bold"></p>
             </div>
           </div>
           <div id="successStrengthBadge" class="px-4 py-2 rounded-lg font-semibold text-sm"></div>
         </div>
       </div>
-      
-      <button onclick="closeSuccessModal()" class="w-full btn-primary px-6 py-4 rounded-xl font-semibold text-base shadow-lg">
+
+      <button onclick="closeSuccessModal()"
+        class="w-full btn-primary px-6 py-4 rounded-xl font-semibold text-base shadow-lg">
         <i class="fas fa-check mr-2"></i>
         Got it! Close
       </button>
     </div>
   </div>
-  
-  
+
+
 </body>
+
 </html>
